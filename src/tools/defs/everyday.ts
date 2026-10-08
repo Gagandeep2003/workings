@@ -1,0 +1,378 @@
+import { group } from "../define";
+import { dateField, numberField, opts, selectField, textField, textareaField, timeField } from "../inputs";
+import { TIME_ZONES } from "@/lib/tz";
+import { UNIT_CATEGORIES, CATEGORY_BY_ID } from "@/lib/units";
+import type { Faq, Paragraph, ToolDefinition } from "../types";
+
+const dates = group({ category: "everyday", engineModule: "everyday/dates", tags: ["dates", "calendar"] }, [
+  {
+    id: "age-calculator",
+    title: "Age Calculator",
+    h1: "Age Calculator",
+    shortDescription: "Exact age in years, months and days from a date of birth, plus the next birthday.",
+    seoTitle: "Age Calculator – Exact Age in Years, Months, Days",
+    seoDescription: "Calculate exact age from a date of birth in years, months and days, with total days and weeks, the weekday you were born and days until your next birthday.",
+    keywords: ["age", "age calculator", "date of birth", "birthday", "how old", "age in days"],
+    aliases: ["how old am i", "date of birth calculator", "calculate age", "age in years months days"],
+    phrases: ["how old am i", "age from date of birth", "age on a specific date", "calculate age in days"],
+    intro: "Enter a date of birth to see your age to the day — leave the second date empty to measure up to today.",
+    inputs: [dateField({ id: "dob", label: "Date of birth" }), dateField({ id: "asof", label: "Age at date (optional)", required: false, hint: "Leave empty for today's date" })],
+    output: { primary: ["Age"] },
+    formula: { expression: ["age = (full years, then full months, then days) between the two dates"], where: ["Years and months are counted on the calendar; leftover days are what remains after the last full month."], plain: "Count whole years, then whole months, then the days that remain." },
+    howItWorks: [
+      "Born on 15 May 1990 and measured on 14 May 2024, a person is 33 years, 11 months and 29 days old — one day short of their 34th birthday. Years and months follow the calendar, so the length of each month is respected rather than assuming 30 days.",
+      "People born on 29 February are treated as having their birthday on 28 February in non-leap years. All the arithmetic uses calendar dates only, with no clock times, so your time zone and daylight saving can never shift the answer by a day.",
+      "To measure the gap between two other dates use [[days-between-dates-calculator]], or look ahead with [[days-until-date-calculator]]. For work history instead of age see [[experience-calculator]].",
+    ],
+    examples: [{ title: "Born 15 May 1990, on 14 May 2024", inputs: { dob: "1990-05-15", asof: "2024-05-14" } }],
+    assumptions: ["“Today” is your device's local date.", "Dates are Gregorian calendar dates."],
+    relatedTools: ["days-between-dates-calculator", "days-until-date-calculator", "date-add-subtract-calculator", "experience-calculator", "working-days-calculator"],
+  },
+  {
+    id: "days-between-dates-calculator",
+    title: "Days Between Dates Calculator",
+    h1: "Days Between Dates Calculator",
+    shortDescription: "Number of days, weeks, months and years between two dates, with an include-end-date option.",
+    seoTitle: "Days Between Dates Calculator – Date Difference",
+    seoDescription: "Find the number of days between two dates, plus weeks, months, years and weekdays. Choose whether to include the end date. Leap years handled exactly.",
+    keywords: ["days between dates", "date difference", "date duration", "how many days between", "date diff"],
+    aliases: ["date difference calculator", "date duration calculator", "number of days between two dates", "date to date calculator"],
+    phrases: ["how many days between two dates", "days from date to date", "difference between two dates in days and months"],
+    intro: "Pick two dates to see how far apart they are in days, weeks and in years, months and days.",
+    inputs: [
+      dateField({ id: "start", label: "Start date" }),
+      dateField({ id: "end", label: "End date" }),
+      selectField({ id: "include", label: "Count the end date?", wide: true, options: opts(["no", "No — count the nights between (default)"], ["yes", "Yes — include both the start and end dates"]) }),
+    ],
+    output: { primary: ["Days between"] },
+    formula: { expression: ["days = end date − start date  (+ 1 if both ends are counted)"], where: ["Dates are converted to day numbers on the calendar, so month and year lengths are exact."], plain: "Count how many calendar days lie between the two dates." },
+    howItWorks: [
+      "From 1 January 2024 to 1 January 2025 is 366 days because 2024 is a leap year. Normally you do not count the start date itself: 1 January to 2 January is 1 day. Choose “include the end date” when both days count, for example a hotel stay is nights but a conference is days.",
+      "The calendar breakdown (years, months, days) uses whole months, so 31 January to 1 March in a leap year is 1 month and 1 day. The result also shows weekdays (Monday–Friday) in the range; for a precise working-day count that handles holidays use the [[working-days-calculator]].",
+      "To count forward or back from a date use [[date-add-subtract-calculator]]; for time until a future date see [[days-until-date-calculator]].",
+    ],
+    examples: [{ title: "Across a leap year", inputs: { start: "2024-01-01", end: "2025-01-01", include: "no" } }],
+    assumptions: ["If the end date is before the start date the two are swapped and a note says so.", "Dates only — clock times and time zones are not involved."],
+    faqs: [{ q: "Does this count the start date?", a: "No by default: the difference between 1 and 2 January is one day. Switch on “include the end date” to count both days." }],
+    relatedTools: ["days-until-date-calculator", "date-add-subtract-calculator", "working-days-calculator", "age-calculator", "experience-calculator", "notice-period-calculator"],
+  },
+  {
+    id: "days-until-date-calculator",
+    title: "Days Until Calculator",
+    h1: "Days Until a Date Calculator",
+    shortDescription: "Countdown in days to a future date — or days since a past one — from today's date.",
+    seoTitle: "Days Until Calculator – Countdown to a Date",
+    seoDescription: "See how many days, weeks, months and years remain until a date, such as a birthday, holiday or deadline. Also shows days since a date in the past.",
+    keywords: ["days until", "countdown", "days left", "days since", "days remaining", "countdown to date"],
+    aliases: ["countdown calculator", "days left calculator", "how many days until", "date countdown"],
+    phrases: ["how many days until christmas", "days until my birthday", "countdown to a date", "days since"],
+    intro: "Enter a date to see how many days away it is from today, using your device's calendar date.",
+    inputs: [dateField({ id: "target", label: "Date" }), textField({ id: "label", label: "Label (optional)", required: false, placeholder: "Christmas", maxLength: 40, hint: "Just names the result — it isn't saved" })],
+    output: { primary: ["Days until…", "Days since…", "That's today"] },
+    formula: { expression: ["days remaining = target date − today's date"], where: ["Today is read from your device when you press Calculate."], plain: "A date-only subtraction on the calendar." },
+    howItWorks: [
+      "The tool subtracts today's calendar date from the date you enter. Because it only compares dates, not clock times, “days until” never changes in the middle of the day and never depends on your time zone.",
+      "If the date is in the past the heading switches to “days since”. The breakdown shows the same gap as weeks and as years, months and days. To measure between two fixed dates use [[days-between-dates-calculator]]; to move a date forward by a set period use [[date-add-subtract-calculator]].",
+    ],
+    examples: [{ title: "Christmas Day, from 3 Oct 2026", inputs: { target: "2026-12-25", label: "Christmas" }, today: "2026-10-03", note: "This example pretends today is 3 October 2026 so the answer stays the same." }],
+    assumptions: ["Uses your device's date, so the result is only as accurate as your device clock."],
+    relatedTools: ["days-between-dates-calculator", "date-add-subtract-calculator", "age-calculator", "working-days-calculator", "notice-period-calculator"],
+  },
+  {
+    id: "date-add-subtract-calculator",
+    title: "Date Calculator: Add or Subtract Time",
+    h1: "Add or Subtract Days, Weeks, Months and Years from a Date",
+    shortDescription: "Find the date that is a set number of years, months, weeks or days before or after a date.",
+    seoTitle: "Add or Subtract Time from a Date – Date Calculator",
+    seoDescription: "Add or subtract years, months, weeks and days from any date to find the resulting date and weekday. Handles month ends and leap years correctly.",
+    keywords: ["add days to date", "subtract days from date", "date calculator", "date plus", "date minus", "what date is"],
+    aliases: ["date add subtract calculator", "add months to date", "date plus days", "date minus days"],
+    phrases: ["what is the date 90 days from today", "add 6 months to a date", "30 days before a date"],
+    intro: "Start from a date, choose add or subtract, and enter any mix of years, months, weeks and days.",
+    inputs: [
+      dateField({ id: "start", label: "Start date" }),
+      selectField({ id: "op", label: "Operation", options: opts(["add", "Add"], ["subtract", "Subtract"]) }),
+      numberField({ id: "years", label: "Years", integer: true, required: false, min: 0, max: 9000 }),
+      numberField({ id: "months", label: "Months", integer: true, required: false, min: 0, max: 100000 }),
+      numberField({ id: "weeks", label: "Weeks", integer: true, required: false, min: 0, max: 1000000 }),
+      numberField({ id: "days", label: "Days", integer: true, required: false, min: 0, max: 3000000 }),
+    ],
+    output: { primary: ["Date after adding", "Date after subtracting"] },
+    formula: { expression: ["result = start + (years, months) then + (weeks × 7 + days)"], where: ["Months are calendar months; if the day doesn't exist in the target month it moves to that month's last day."], plain: "Move by whole calendar months and years first, then by days." },
+    howItWorks: [
+      "Adding one month to 31 January 2024 gives 29 February 2024, the last day of February that year. Adding 30 days to the same date gives 1 March, because days are counted exactly rather than as months. That is why the order matters: years and months are applied first, then weeks and days.",
+      "The result includes the weekday and the total number of days moved. To compare two dates directly use [[days-between-dates-calculator]]; to skip weekends and holidays when adding use the “add working days” option in the [[working-days-calculator]]; for a resignation last day see [[notice-period-calculator]].",
+    ],
+    examples: [{ title: "31 Jan 2024 + 1 month", inputs: { start: "2024-01-31", op: "add", years: "", months: "1", weeks: "", days: "" } }],
+    assumptions: ["Gregorian calendar, years 1–9999."],
+    relatedTools: ["days-between-dates-calculator", "days-until-date-calculator", "working-days-calculator", "notice-period-calculator", "age-calculator"],
+  },
+  {
+    id: "working-days-calculator",
+    title: "Working Days Calculator",
+    h1: "Working Days Calculator (Business Days)",
+    shortDescription: "Count working days between two dates, or add working days to a date, with your own holidays.",
+    seoTitle: "Working Days Calculator – Business Days Between Dates",
+    seoDescription: "Count business days between two dates or add working days to a date. Choose your weekend, list public holidays, and see weekends and holidays excluded.",
+    keywords: ["working days", "business days", "weekdays", "workdays", "excluding weekends", "excluding holidays"],
+    aliases: ["business days calculator", "workday calculator", "weekdays between dates", "working day calculator", "add business days"],
+    phrases: ["working days between two dates", "add 10 business days to a date", "count weekdays excluding holidays"],
+    intro: "Count the days that are neither weekend nor holiday between two dates, or find the date after a number of working days.",
+    inputs: [
+      selectField({ id: "mode", label: "What do you want to do?", wide: true, options: opts(["count", "Count working days between two dates"], ["add", "Find the date after N working days"]) }),
+      dateField({ id: "start", label: "Start date" }),
+      dateField({ id: "end", label: "End date", showIf: { field: "mode", equals: "count" } }),
+      numberField({ id: "count", label: "Working days to add", integer: true, min: 1, max: 10000, showIf: { field: "mode", equals: "add" } }),
+      selectField({ id: "weekend", label: "Weekend", wide: true, options: opts(["sat-sun", "Saturday and Sunday"], ["fri-sat", "Friday and Saturday"], ["sun-only", "Sunday only"], ["none", "No weekend (every day counts)"]) }),
+      textareaField({ id: "holidays", label: "Holidays to skip (optional)", required: false, rows: 3, placeholder: "2024-01-26\n2024-08-15", hint: "Dates as YYYY-MM-DD, separated by commas or new lines", maxLength: 20000 }),
+    ],
+    output: { primary: ["Working days", "Date after…"] },
+    formula: { expression: ["working days = calendar days − weekend days − holidays that fall on working days"], where: ["Both the start and end dates are included when counting."], plain: "Go day by day and count only the days that are not weekend and not a listed holiday." },
+    howItWorks: [
+      "January 2024 has 31 days, 8 of them weekend days, leaving 23 working days. Add the 26th as a public holiday and you get 22. Holidays that fall on a weekend are not subtracted twice.",
+      "Public holidays vary by country, state and employer, so this tool deliberately has no built-in holiday list; paste the dates that apply to you. When adding working days the start date is not counted — day 1 is the next working day. If you need calendar days instead use [[days-between-dates-calculator]] or [[date-add-subtract-calculator]]; for a notice period see [[notice-period-calculator]].",
+    ],
+    examples: [{ title: "January 2024 with a holiday on the 26th", inputs: { mode: "count", start: "2024-01-01", end: "2024-01-31", weekend: "sat-sun", holidays: "2024-01-26" } }, { title: "5 working days after Friday 5 Jan 2024", inputs: { mode: "add", start: "2024-01-05", count: "5", weekend: "sat-sun", holidays: "" } }],
+    assumptions: ["Holidays are only what you list. Half-days aren't supported.", "Dates only — time zones don't matter."],
+    relatedTools: ["days-between-dates-calculator", "date-add-subtract-calculator", "notice-period-calculator", "leave-calculator", "days-until-date-calculator"],
+  },
+]);
+
+const zoneOptions = TIME_ZONES.map((z) => ({ value: z.id, label: z.label, group: z.group }));
+
+const timezone = group({ category: "everyday", engineModule: "everyday/timezone", tags: ["time zone", "time"] }, [
+  {
+    id: "timezone-converter",
+    title: "Time Zone Converter",
+    h1: "Time Zone Converter",
+    shortDescription: "Convert a date and time between world time zones, handling daylight saving correctly.",
+    seoTitle: "Time Zone Converter – Convert Between Cities",
+    seoDescription: "Convert a date and time between 48 time zones. Daylight-saving gaps and overlaps are detected, and the same moment is shown in other cities.",
+    keywords: ["time zone", "timezone converter", "time difference", "convert time", "UTC", "IST", "EST", "daylight saving"],
+    aliases: ["time zone calculator", "world time converter", "time converter between cities", "ist to est", "utc converter"],
+    phrases: ["convert 9:30 am IST to New York time", "time difference between two cities", "what time is it in tokyo when it is noon in london"],
+    intro: "Choose a date, a time and the zone it is in, then the zone you want — the result includes the date change if there is one.",
+    inputs: [
+      dateField({ id: "date", label: "Date" }),
+      timeField({ id: "time", label: "Time (24-hour)", default: "09:00" }),
+      selectField({ id: "from", label: "From", default: "Europe/London", options: zoneOptions }),
+      selectField({ id: "to", label: "To", default: "America/New_York", options: zoneOptions }),
+    ],
+    swapFields: ["from", "to"],
+    output: { primary: ["Time in…"] },
+    formula: { expression: ["UTC = local time − source offset", "target time = UTC + target offset"], where: ["Offsets depend on the date, because of daylight saving."], plain: "Convert to universal time first, then to the destination zone." },
+    howItWorks: [
+      "9:30 in India (UTC+05:30) on 15 January is 04:00 UTC, which is 23:00 on 14 January in New York (UTC−05:00) — so the date changes as well as the time. The tool always shows the date at the destination.",
+      "Daylight saving makes some local times impossible or ambiguous. On the night US clocks spring forward, 02:30 does not exist; when they fall back, 01:30 happens twice. The tool tells you instead of guessing, and uses the earlier of two ambiguous times.",
+      "The conversion uses your device's built-in IANA time-zone database, so it is accurate for past dates and near-future dates. For clock-independent timestamps see the [[unix-timestamp-converter]], and for pure date maths see [[date-add-subtract-calculator]].",
+    ],
+    examples: [{ title: "9:30 in Kolkata → New York", inputs: { date: "2026-01-15", time: "09:30", from: "Asia/Kolkata", to: "America/New_York" } }],
+    assumptions: ["Uses your browser's time-zone data; far-future dates assume today's daylight-saving rules.", "A short list of widely used zones is offered rather than every zone in the database."],
+    relatedTools: ["unix-timestamp-converter", "date-add-subtract-calculator", "days-between-dates-calculator", "unit-converter", "working-days-calculator"],
+  },
+]);
+
+// ---- Unit converters (shared factory) ------------------------------------------------------------
+function unitOptions(categoryId: string) {
+  const c = CATEGORY_BY_ID.get(categoryId)!;
+  return c.units.map((u) => ({ value: u.id, label: `${u.label} (${u.symbol})` }));
+}
+
+type ConverterContent = {
+  id: string; categoryId: string; title: string; h1: string; shortDescription: string; seoTitle: string; seoDescription: string;
+  keywords: string[]; aliases: string[]; phrases: string[]; intro: string; formula: ToolDefinition["formula"];
+  howItWorks: Paragraph[]; example: { inputs: Record<string, string>; title: string };
+  assumptions: string[]; faqs?: Faq[]; related: string[]; defaultFrom: string; defaultTo: string; allowNegative?: boolean;
+};
+
+function converter(c: ConverterContent) {
+  return {
+    id: c.id,
+    title: c.title, h1: c.h1, shortDescription: c.shortDescription, seoTitle: c.seoTitle, seoDescription: c.seoDescription,
+    keywords: c.keywords, aliases: c.aliases, phrases: c.phrases, intro: c.intro,
+    inputs: [
+      numberField({ id: "value", label: "Value", ...(c.allowNegative ? { allowNegative: true } : {}) }),
+      selectField({ id: "from", label: "From", default: c.defaultFrom, options: unitOptions(c.categoryId) }),
+      selectField({ id: "to", label: "To", default: c.defaultTo, options: unitOptions(c.categoryId) }),
+    ],
+    swapFields: ["from", "to"] as [string, string],
+    mode: "live" as const,
+    output: { primary: ["…"] },
+    formula: c.formula, howItWorks: c.howItWorks,
+    examples: [{ title: c.example.title, inputs: c.example.inputs }],
+    assumptions: c.assumptions, faqs: c.faqs, relatedTools: c.related,
+  };
+}
+
+const converters = group({ category: "everyday", engineModule: "everyday/convert", tags: ["conversion", "units"] }, [
+  converter({
+    id: "length-converter", categoryId: "length", title: "Length Converter", h1: "Length Converter",
+    shortDescription: "Convert between kilometres, metres, centimetres, miles, yards, feet, inches and more.",
+    seoTitle: "Length Converter – km, Miles, Feet, Inches, cm",
+    seoDescription: "Convert length between kilometres, metres, centimetres, millimetres, miles, yards, feet, inches and nautical miles using exact international definitions.",
+    keywords: ["length converter", "distance converter", "km to miles", "feet to meters", "inches to cm", "metric imperial"],
+    aliases: ["distance converter", "metres to feet", "cm to inches", "miles to km", "length unit converter"],
+    phrases: ["convert miles to kilometres", "how many cm in an inch", "feet to metres"],
+    intro: "Type a value, choose the units, and see the result immediately along with every other length unit.",
+    formula: { expression: ["value in target unit = value × (metres per source unit) ÷ (metres per target unit)"], where: ["1 inch = 25.4 mm exactly", "1 foot = 0.3048 m", "1 mile = 1,609.344 m", "1 nautical mile = 1,852 m"], plain: "Convert to metres, then to the unit you want." },
+    howItWorks: [
+      "Since 1959 the inch has been defined as exactly 25.4 millimetres, and every other imperial length follows from it: a foot is 0.3048 m, a yard 0.9144 m and a mile 1,609.344 m. These definitions are exact, so conversions like miles to kilometres carry no hidden rounding.",
+      "The mile here is the international mile. The old US survey mile used for some land surveys differs by about two parts per million and is not included. A nautical mile (used at sea and in the air) is longer than a land mile at 1,852 m. For speeds in these units see the [[speed-converter]]; for areas use the [[area-converter]], and for everything else the [[unit-converter]].",
+    ],
+    example: { title: "1 mile in kilometres", inputs: { value: "1", from: "mi", to: "km" } },
+    assumptions: ["Metric prefixes and international imperial units only."],
+    related: ["unit-converter", "area-converter", "volume-converter", "speed-converter", "weight-converter", "speed-time-distance-calculator"],
+    defaultFrom: "km", defaultTo: "mi", allowNegative: true,
+  }),
+  converter({
+    id: "weight-converter", categoryId: "mass", title: "Weight Converter", h1: "Weight and Mass Converter",
+    shortDescription: "Convert between kilograms, grams, pounds, ounces, stones, tonnes, quintals and carats.",
+    seoTitle: "Weight Converter – kg to lb, Ounces, Stones, Grams",
+    seoDescription: "Convert kilograms, grams, pounds, ounces, stones, tonnes, quintals, carats and short and long tons with exact factors, such as 1 lb = 0.45359237 kg.",
+    keywords: ["weight converter", "mass converter", "kg to lbs", "pounds to kg", "ounces to grams", "stone to kg"],
+    aliases: ["kg to pounds", "lbs to kg", "grams to ounces", "mass converter", "weight unit converter"],
+    phrases: ["convert kg to pounds", "how many grams in an ounce", "stone to kilograms"],
+    intro: "Convert any common weight or mass unit and see the value in all the others at once.",
+    formula: { expression: ["value in target unit = value × (kg per source unit) ÷ (kg per target unit)"], where: ["1 lb = 0.45359237 kg exactly", "1 oz = 28.349523125 g", "1 stone = 14 lb", "1 quintal = 100 kg"], plain: "Convert to kilograms, then to the unit you want." },
+    howItWorks: [
+      "The international pound is defined as exactly 0.45359237 kilograms, and an ounce is one sixteenth of a pound (28.349523125 g). Everyday “weight” is really mass, which is what these units measure; the difference only matters when you leave Earth.",
+      "Three units trip people up: the UK stone is 14 pounds (6.35 kg), the “ton” is ambiguous — a US short ton is 907 kg, a UK long ton 1,016 kg and a metric tonne 1,000 kg, and all three are listed separately — and the quintal used in Indian agriculture is 100 kg. The carat (200 mg) is for gemstones. For length use [[length-converter]]; to convert recipe volumes see [[volume-converter]].",
+    ],
+    example: { title: "100 kg in pounds", inputs: { value: "100", from: "kg", to: "lb" } },
+    assumptions: ["Troy ounces and other precious-metal units aren't included."],
+    related: ["unit-converter", "volume-converter", "length-converter", "temperature-converter", "area-converter"],
+    defaultFrom: "kg", defaultTo: "lb",
+  }),
+  converter({
+    id: "temperature-converter", categoryId: "temperature", title: "Temperature Converter", h1: "Temperature Converter",
+    shortDescription: "Convert between Celsius, Fahrenheit, Kelvin and Rankine, with absolute-zero checks.",
+    seoTitle: "Temperature Converter – Celsius, Fahrenheit, Kelvin",
+    seoDescription: "Convert between Celsius, Fahrenheit, Kelvin and Rankine with the exact formulas shown. Values below absolute zero are rejected as impossible.",
+    keywords: ["temperature converter", "celsius to fahrenheit", "fahrenheit to celsius", "kelvin", "rankine"],
+    aliases: ["celsius fahrenheit converter", "c to f", "f to c", "temp converter", "degrees converter"],
+    phrases: ["convert 100 celsius to fahrenheit", "98.6 fahrenheit in celsius", "celsius to kelvin"],
+    intro: "Temperature scales don't share a zero point, so these conversions use formulas rather than a single multiplier.",
+    formula: { expression: ["°F = °C × 9/5 + 32", "°C = (°F − 32) × 5/9", "K = °C + 273.15", "°R = (°C + 273.15) × 9/5"], where: ["Absolute zero is 0 K = −273.15 °C = −459.67 °F."], plain: "Scale the size of the degree, then shift the zero point." },
+    howItWorks: [
+      "Water freezes at 0 °C (32 °F) and boils at 100 °C (212 °F) at standard pressure. A Celsius degree is 1.8 times the size of a Fahrenheit degree, hence the ×9/5, and the scales are offset by 32 — which is why −40 is the one temperature where both agree.",
+      "Kelvin uses the same size of degree as Celsius but starts at absolute zero, so it never goes negative; the tool rejects anything below it. Kelvin is written without a degree sign. Rankine does the same for Fahrenheit-sized degrees. For other measurements try the [[unit-converter]] or [[fuel-economy-converter]].",
+    ],
+    example: { title: "100 °C in °F", inputs: { value: "100", from: "c", to: "f" } },
+    assumptions: ["Results are shown to up to 10 significant digits."],
+    related: ["unit-converter", "weight-converter", "volume-converter", "speed-converter", "length-converter"],
+    defaultFrom: "c", defaultTo: "f", allowNegative: true,
+  }),
+  converter({
+    id: "area-converter", categoryId: "area", title: "Area Converter", h1: "Area Converter",
+    shortDescription: "Convert square metres, hectares, acres, square feet, square yards, square miles and more.",
+    seoTitle: "Area Converter – Acres, Hectares, Square Feet, m²",
+    seoDescription: "Convert area between square metres, hectares, acres, square feet, square yards, square kilometres, square miles and square inches with exact factors.",
+    keywords: ["area converter", "acres to hectares", "square feet to square meters", "hectare", "acre", "sq ft"],
+    aliases: ["land area converter", "sq ft to sq m", "acre to square feet", "hectare to acre", "square meter converter"],
+    phrases: ["convert acres to hectares", "square feet to square metres", "how many square feet in an acre"],
+    intro: "Convert between metric and imperial land and floor areas, with every other unit listed alongside.",
+    formula: { expression: ["value in target unit = value × (m² per source unit) ÷ (m² per target unit)"], where: ["1 hectare = 10,000 m²", "1 acre = 4,046.8564224 m² = 43,560 ft²", "1 ft² = 0.09290304 m²"], plain: "Convert to square metres, then to the unit you want." },
+    howItWorks: [
+      "Area units are the square of length units, so the factors are squares too: since 1 foot is 0.3048 m, 1 square foot is 0.3048² = 0.09290304 m². An acre is defined as 43,560 square feet, about 4,046.86 m², and a hectare is a 100 m × 100 m square.",
+      "Regional units common in property listings — bigha, gaj, kanal, cent, ground — differ from one state or country to another (a bigha can be a fraction of an acre in one state and over an acre in another), so they are left out rather than guessed. Check your local land records for the definition that applies. See also [[length-converter]] and [[volume-converter]].",
+    ],
+    example: { title: "1 acre in square feet", inputs: { value: "1", from: "ac", to: "ft2" } },
+    assumptions: ["Only units with a single worldwide definition are included."],
+    related: ["unit-converter", "length-converter", "volume-converter", "weight-converter"],
+    defaultFrom: "ac", defaultTo: "ha",
+  }),
+  converter({
+    id: "volume-converter", categoryId: "volume", title: "Volume Converter", h1: "Volume Converter",
+    shortDescription: "Convert litres, millilitres, cubic metres, US and imperial gallons, cups, spoons and more.",
+    seoTitle: "Volume Converter – Litres, Gallons, Cups, mL",
+    seoDescription: "Convert litres, millilitres, cubic metres, US gallons, imperial gallons, quarts, pints, cups, fluid ounces and spoons. US and UK units kept separate.",
+    keywords: ["volume converter", "liters to gallons", "ml to cups", "gallon", "litre", "cooking conversion"],
+    aliases: ["liquid converter", "litres to gallons", "cups to ml", "gallons to litres", "capacity converter"],
+    phrases: ["convert litres to gallons", "how many ml in a cup", "us gallon to uk gallon"],
+    intro: "Convert liquid and cooking volumes, with US and imperial (UK) units kept clearly separate.",
+    formula: { expression: ["value in target unit = value × (m³ per source unit) ÷ (m³ per target unit)"], where: ["1 US gallon = 231 in³ = 3.785411784 L", "1 imperial gallon = 4.54609 L", "1 L = 0.001 m³"], plain: "Convert to cubic metres, then to the unit you want." },
+    howItWorks: [
+      "The same word means different amounts on either side of the Atlantic. A US gallon is 3.785 litres (231 cubic inches); an imperial gallon, still used for UK fuel economy, is 4.546 litres — about 20% larger. The pint, quart and fluid ounce inherit the difference, so both versions are listed by name.",
+      "Cooking units follow the US customary system: a US cup is 236.588 mL, a tablespoon a sixteenth of a cup. Nutrition labels in the US use a rounded 240 mL “cup”, and metric countries often use 250 mL, so recipes can differ a little. For the fuel-economy side of gallons see [[fuel-economy-converter]]; for mass use [[weight-converter]].",
+    ],
+    example: { title: "1 US gallon in litres", inputs: { value: "1", from: "gal_us", to: "l" } },
+    assumptions: ["US legal and metric cooking cups aren't listed separately."],
+    related: ["unit-converter", "weight-converter", "fuel-economy-converter", "length-converter", "area-converter"],
+    defaultFrom: "l", defaultTo: "gal_us",
+  }),
+  converter({
+    id: "speed-converter", categoryId: "speed", title: "Speed Converter", h1: "Speed Converter",
+    shortDescription: "Convert between km/h, mph, m/s, knots and feet per second.",
+    seoTitle: "Speed Converter – km/h, mph, m/s, Knots",
+    seoDescription: "Convert speed between kilometres per hour, miles per hour, metres per second, knots and feet per second. Uses exact definitions of each unit.",
+    keywords: ["speed converter", "km/h to mph", "mph to km/h", "m/s to km/h", "knots", "velocity converter"],
+    aliases: ["kmh to mph", "velocity converter", "knots to km/h", "meters per second converter", "speed unit converter"],
+    phrases: ["convert 100 km/h to mph", "knots to mph", "m/s to km/h"],
+    intro: "Convert any common speed unit and compare the result with every other one.",
+    formula: { expression: ["value in target unit = value × (m/s per source unit) ÷ (m/s per target unit)"], where: ["1 km/h = 1/3.6 m/s", "1 mph = 0.44704 m/s exactly", "1 knot = 1 nautical mile per hour = 1.852 km/h"], plain: "Convert to metres per second, then to the unit you want." },
+    howItWorks: [
+      "To convert m/s to km/h multiply by 3.6 (3,600 seconds in an hour ÷ 1,000 metres in a kilometre). A mile per hour is exactly 0.44704 m/s, so 100 km/h is about 62.14 mph.",
+      "A knot is one nautical mile per hour. A nautical mile is 1,852 m — roughly one minute of latitude — so a knot is about 1.15 mph. Aviation and shipping use knots; road speeds use km/h or mph. To work out a journey from a speed use the [[speed-time-distance-calculator]]; for distances alone see [[length-converter]].",
+    ],
+    example: { title: "100 km/h in mph", inputs: { value: "100", from: "kmh", to: "mph" } },
+    assumptions: ["Mach number isn't included because it depends on temperature and altitude."],
+    related: ["speed-time-distance-calculator", "length-converter", "unit-converter", "fuel-economy-converter"],
+    defaultFrom: "kmh", defaultTo: "mph", allowNegative: true,
+  }),
+  converter({
+    id: "fuel-economy-converter", categoryId: "fuel", title: "Fuel Economy Converter", h1: "Fuel Economy Converter",
+    shortDescription: "Convert km/L, L/100 km, US mpg and UK mpg.",
+    seoTitle: "Fuel Economy Converter – mpg, km/L, L/100km",
+    seoDescription: "Convert fuel economy between kilometres per litre, litres per 100 km, US mpg and UK (imperial) mpg. Handles the reciprocal relationship correctly.",
+    keywords: ["fuel economy", "mpg", "km per litre", "l/100km", "mileage converter", "fuel consumption"],
+    aliases: ["mpg to km/l", "mpg to l/100km", "mileage converter", "fuel efficiency converter", "kmpl to mpg"],
+    phrases: ["convert 30 mpg to l/100km", "km/l to mpg", "uk mpg vs us mpg"],
+    intro: "Convert between distance-per-fuel units (km/L, mpg) and fuel-per-distance (L/100 km) — two ways of describing the same thing.",
+    formula: { expression: ["L/100 km = 100 ÷ (km/L)", "mpg (US) = km/L × 2.352146…", "mpg (UK) = km/L × 2.824809…"], where: ["The US gallon is 3.785411784 L; the imperial gallon is 4.54609 L."], plain: "km/L and L/100 km are reciprocals, so one rises as the other falls." },
+    howItWorks: [
+      "Most of the world rates cars in litres per 100 km (smaller is better) while India often quotes km per litre and the US quotes miles per US gallon (larger is better). Because L/100 km is the reciprocal of km/L, the conversion is a division, not a multiplication: 20 km/L is 100 ÷ 20 = 5 L/100 km.",
+      "UK miles per gallon use the larger imperial gallon, so the same car shows about 20% more mpg in the UK than the US — 30 mpg (US) is 36 mpg (UK). The page lists both separately. Zero isn't accepted because it would mean infinite consumption. See also [[volume-converter]] and [[length-converter]].",
+    ],
+    example: { title: "8 L/100 km in km/L", inputs: { value: "8", from: "l100", to: "kmpl" } },
+    assumptions: ["Figures are theoretical conversions; real-world economy depends on conditions."],
+    related: ["volume-converter", "length-converter", "unit-converter", "speed-converter", "speed-time-distance-calculator"],
+    defaultFrom: "kmpl", defaultTo: "l100",
+  }),
+]);
+
+const allUnitOptions = UNIT_CATEGORIES.flatMap((c) => c.units.map((u) => ({ value: u.id, label: `${u.label} (${u.symbol})`, when: { field: "category", equals: c.id } })));
+
+const general = group({ category: "everyday", engineModule: "everyday/convert", tags: ["conversion", "units"] }, [
+  {
+    id: "unit-converter",
+    title: "Unit Converter",
+    h1: "Unit Converter",
+    shortDescription: "One converter for length, weight, temperature, area, volume, speed, time, data storage and fuel economy.",
+    seoTitle: "Unit Converter – Length, Weight, Time, Data and More",
+    seoDescription: "Convert between units of length, weight, temperature, area, volume, speed, time, digital storage and fuel economy. Exact factors from one shared table.",
+    keywords: ["unit converter", "convert units", "measurement converter", "time converter", "data storage converter", "bytes", "hours to minutes"],
+    aliases: ["measurement converter", "general converter", "conversion calculator", "time converter", "hours to minutes", "mb to gb", "digital storage converter"],
+    phrases: ["convert hours to minutes", "mb to gb", "convert between units", "how many seconds in a day"],
+    intro: "Choose a category, then the two units — this one converter covers nine categories, including time and digital storage.",
+    inputs: [
+      selectField({ id: "category", label: "Category", wide: true, options: UNIT_CATEGORIES.map((c) => ({ value: c.id, label: c.label })) }),
+      numberField({ id: "value", label: "Value", allowNegative: true }),
+      selectField({ id: "from", label: "From", options: allUnitOptions }),
+      selectField({ id: "to", label: "To", fallbackIndex: 1, options: allUnitOptions }),
+    ],
+    swapFields: ["from", "to"],
+    mode: "live",
+    output: { primary: ["…"] },
+    formula: { expression: ["value in target unit = value × (base units per source unit) ÷ (base units per target unit)"], where: ["Each category has one base unit: metre, kilogram, square metre, cubic metre, metre per second, second or byte.", "Temperature and fuel economy use their own formulas."], plain: "Convert to the category's base unit, then to the unit you want." },
+    howItWorks: [
+      "Every unit in a category is defined relative to one base unit, so any pair converts through it. An hour is 3,600 seconds and a day is 86,400, which is why 1 hour is 1/24 of a day exactly. Months and years are not fixed lengths, so the time category uses Gregorian averages (30.436875 and 365.2425 days) and labels them “average”.",
+      "For digital storage there are two conventions. KB, MB, GB and TB follow the SI prefixes (powers of 1,000), which is what drive makers and networks use. KiB, MiB, GiB and TiB are powers of 1,024, which is how most operating systems count memory. That is why a “500 GB” drive shows up as about 465 GiB.",
+      "Dedicated pages give more detail for each category: [[length-converter]], [[weight-converter]], [[temperature-converter]], [[area-converter]], [[volume-converter]], [[speed-converter]] and [[fuel-economy-converter]].",
+    ],
+    examples: [{ title: "2 hours in minutes", inputs: { category: "time", value: "2", from: "h", to: "min" } }, { title: "1 GiB in MB", inputs: { category: "data", value: "1", from: "GiB", to: "MB" } }],
+    assumptions: ["Switching category resets the two unit selections.", "Results are shown to up to 10 significant digits."],
+    relatedTools: ["length-converter", "weight-converter", "temperature-converter", "volume-converter", "area-converter", "speed-converter"],
+  },
+]);
+
+export const everydayTools = [...dates, ...timezone, ...converters, ...general];

@@ -1,0 +1,50 @@
+{
+  "name": "workings",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Workings — fast, no-signup calculators, converters and developer tools that show their working.",
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "prebuild": "tsx scripts/validate-registry.ts",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "validate:registry": "tsx scripts/validate-registry.ts",
+    "validate:seo": "tsx scripts/validate-seo.ts",
+    "validate:a11y": "tsx scripts/validate-a11y.ts",
+    "validate:env": "tsx scripts/validate-env.ts",
+    "validate:secrets": "tsx scripts/check-secrets.ts",
+    "validate:bundle": "tsx scripts/report-bundle.ts",
+    "monetization:check": "tsx scripts/monetization-check.ts",
+    "validate": "npm run validate:registry && npm run validate:env && npm run validate:seo && npm run validate:a11y && npm run validate:secrets && npm run validate:bundle",
+    "verify": "npm run typecheck && npm run lint && npm test && npm run build && npm run validate"
+  },
+  "dependencies": {
+    "@fontsource-variable/figtree": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "next": "^16.3.8",
+    "qrcode-generator": "^2.0.4",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "devDependencies": {
+    "@types/jsdom": "^30.0.0",
+    "@types/node": "^26.6.4",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "axe-core": "^4.13.0",
+    "cheerio": "^1.2.0",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.3.8",
+    "jsdom": "^30.1.1",
+    "jsqr": "^1.4.0",
+    "tsx": "^4.23.15",
+    "typescript": "~5.9",
+    "vitest": "^5.0.3"
+  }
+}
