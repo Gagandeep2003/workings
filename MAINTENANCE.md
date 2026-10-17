@@ -5,11 +5,11 @@ and the **optional** revenue integrations. Everything below is a periodic review
 
 ## Tool classification
 
-**Evergreen — 75 tools.** Pure maths, unit definitions, calendar arithmetic, text/format utilities. They don't change unless there's a bug.
+**Evergreen — 108 tools.** Pure maths, unit definitions, calendar arithmetic, text/format utilities. They don't change unless there's a bug.
 Review only if a bug is reported. (Percentages, fractions, ratios, averages, probability, speed/work, all converters, age/date tools, time zones,
 marks/attendance/GPA/CGPA/SGPA tools, salary arithmetic, notice/leave/experience, EMI/amortization/interest/SIP/FD/RD/CAGR/inflation, and all developer tools.)
 
-**Periodically reviewed — 6 tools.** They embed an external rule. Re-check the rule and update `regulatory.reviewedOn` **only** when you have really re-checked it.
+**Periodically reviewed — 19 tools.** They embed an external rule. Re-check the rule and update `regulatory.reviewedOn` **only** when you have really re-checked it.
 
 | Tool | Rule | Review when | Where |
 | --- | --- | --- | --- |
@@ -18,6 +18,16 @@ marks/attendance/GPA/CGPA/SGPA tools, salary arithmetic, notice/leave/experience
 | `ssc-cgl-tier-1-score-calculator` | Tier-I scheme (4 × 25 questions, +2 / −0.5, 200 marks) | When SSC publishes each new CGL notification | `src/engines/exams/ssc.ts` + `defs/exams.ts` |
 | `ssc-chsl-tier-1-score-calculator` | Same, for CHSL | Each new CHSL notification | same |
 | `cgpa-to-percentage-calculator`, `percentage-to-cgpa-calculator` | CBSE multiplier 9.5 | If CBSE publishes a different rule | `src/engines/student/grades.ts` + `defs/student.ts` |
+| `jee-main-marks-calculator` | Paper 1 pattern (25 questions per subject: 20 MCQ + 5 numerical), +4 / −1 MCQ, Section B penalty shown both ways | Each JEE Main bulletin (twice a year) | `src/engines/exams/entrance.ts` + `defs/exams-entrance.ts` |
+| `jee-main-percentile-calculator` | NTA percentile definition (candidates at or below you ÷ candidates in the session; 7 decimals) | If NTA changes its normalisation | `src/engines/exams/percentile.ts` |
+| `jee-advanced-marks-calculator` | Rule types (partial marking, penalties); marks per type are user-editable | Each JEE Advanced brochure (yearly) | `src/engines/exams/entrance.ts` |
+| `neet-ug-marks-calculator`, `neet-qualifying-cutoff-checker` | 180 compulsory questions, +4 / −1, 720 marks; qualifying percentiles 50 / 45 / 40 | Each NEET (UG) bulletin | `src/engines/exams/entrance.ts` |
+| `gate-marks-calculator`, `gate-score-calculator` | ⅓ / ⅔ MCQ penalty; score formula `Sq + (St − Sq)(M − Mq)/(Mt − Mq)` with Sq = 350, St = 900 | Each GATE brochure (yearly, new organising IIT) | `src/engines/exams/gate.ts` |
+| `cat-score-calculator`, `cat-percentile-calculator` | CAT 2025 pattern: 24 / 22 / 22 questions, +3 / −1 MCQ, no TITA penalty, 204 marks | Each CAT notification (yearly) | `src/engines/exams/management.ts` |
+| `ssc-mts-score-calculator` | 2025 notification: Session I 40 Q (no penalty), Session II 50 Q (−1), 3 marks per question | Each SSC MTS notification | `src/engines/exams/government.ts` |
+| `banking-prelims-score-calculator` | IBPS PO Prelims 100 Q (30 / 35 / 35), ¼ penalty, equal marks per question | Each IBPS PO / Clerk notification | same |
+| `upsc-prelims-score-calculator` | GS Paper I 100 × 2, CSAT 80 × 2.5, ⅓ penalty, CSAT 33 % qualifying | If UPSC changes the Prelims scheme | same |
+| `rrb-ntpc-group-d-score-calculator` | NTPC CBT-1 (100), CBT-2 (120), Group D (100): 1 mark, ⅓ penalty | Each RRB notification | same |
 
 If a rule is uncertain or changes and you can't update it promptly: **make the tool year-specific, or remove it from `TOOLS`** (and from its category page). Never leave stale rules live.
 `tests/engines.exams.test.ts` and `tests/engines.career.test.ts` pin the current rule values — update them together with the rule.
@@ -50,3 +60,17 @@ secondary links with the official PDFs/circulars, and then update `reviewedOn`. 
 * **Affiliates** (`src/config/affiliates.ts`, `AFFILIATES_ENABLED`): ships empty. Add only real, relevant offers; keep `disclosureRequired: true`; re-check links quarterly (merchants retire campaigns).
 * **Sponsors** (`src/config/sponsors.ts`, `DIRECT_ADS_ENABLED`): ships empty. Images go in `public/sponsors/`. Expired sponsors disappear automatically; remove stale entries when convenient.
 * **Search Console / Bing Webmaster**: verify the domain, submit `/sitemap.xml`, watch for "Duplicate, Google chose different canonical" on sibling tools (percentage increase/decrease/change, SSC CGL/CHSL).
+
+
+## Exam tools added in October 2026 — what to confirm yourself
+
+The exam rules were cross-checked against several independent published summaries on 2026-10-13. **The official bulletins and notifications could not be opened during that review**,
+so each tool says so in its "Sources and review" box. Before relying on them for a new cycle, open the official source linked on the tool's page and confirm:
+
+* **JEE Main Section B penalty.** Sources disagreed (zero penalty vs −1 for a wrong numerical answer), so the tool shows both totals. If you confirm the rule, set the select's default and
+  simplify the copy in `defs/exams-entrance.ts`.
+* **JEE Advanced marks per question type.** Section counts and marks differ between summaries and between years, so the marks are editable inputs. Only the rule *types* are modelled.
+* **IBPS PO prelims per-section marks.** Sources disagree (30/30/40 vs equal marks). The tool treats every question as equal marks and lets the user edit it.
+* **CAT percentile / GATE Mq and Mt.** The tools apply the standard percentile definition and the published GATE formula to figures the visitor supplies. No cut-off, Mq, Mt or rank table is embedded, deliberately.
+
+**Deliberately not built** because no reliable, verifiable scheme was found: XAT, MAT and CMAT score tools, and any rank estimator (a rank needs every candidate's marks).

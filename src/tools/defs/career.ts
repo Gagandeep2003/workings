@@ -4,6 +4,7 @@ import { amountField, currencyField, dateField, numberField, opts, percentField,
 const salary = group({ category: "career", engineModule: "career/salary", tags: ["salary", "pay"], commercialIntent: "high", disclaimer: "salary", affiliateProfile: { categories: ["jobs"] } }, [
   {
     id: "salary-increment-calculator",
+    icon: "trending-up",
     title: "Salary Increment Calculator",
     h1: "Salary Increment Calculator",
     shortDescription: "New salary after a percentage increment, with an optional multi-year projection.",
@@ -17,7 +18,7 @@ const salary = group({ category: "career", engineModule: "career/salary", tags: 
       selectField({ id: "period", label: "Salary is entered per", options: opts(["annual", "Year"], ["monthly", "Month"]) }),
       amountField({ id: "salary", label: "Current salary", min: 0.01 }),
       percentField({ id: "pct", label: "Increment", min: 0, max: 1000 }),
-      numberField({ id: "years", label: "Years to project (optional)", required: false, integer: true, min: 1, max: 10, hint: "Assumes the same increment every year" }),
+      numberField({ id: "years", label: "Years to project", required: false, integer: true, min: 1, max: 10, hint: "Assumes the same increment every year" }),
       currencyField(),
     ],
     output: { primary: ["New salary per…"] },
@@ -32,6 +33,7 @@ const salary = group({ category: "career", engineModule: "career/salary", tags: 
   },
   {
     id: "salary-hike-percentage-calculator",
+    icon: "badge-percent",
     title: "Salary Hike Percentage Calculator",
     h1: "Salary Hike Percentage Calculator",
     shortDescription: "The percentage hike between your old and new salary.",
@@ -54,6 +56,7 @@ const salary = group({ category: "career", engineModule: "career/salary", tags: 
   },
   {
     id: "salary-comparison-calculator",
+    icon: "git-compare",
     title: "Salary Comparison Calculator",
     h1: "Salary Comparison Calculator (Compare Two Offers)",
     shortDescription: "Compare two job offers by base pay, bonus and other pay, per year and per month.",
@@ -67,10 +70,10 @@ const salary = group({ category: "career", engineModule: "career/salary", tags: 
       selectField({ id: "period", label: "Amounts are per", wide: true, options: opts(["annual", "Year"], ["monthly", "Month"]) }),
       amountField({ id: "abase", label: "Offer A — base pay", min: 0 }),
       amountField({ id: "bbase", label: "Offer B — base pay", min: 0 }),
-      amountField({ id: "abonus", label: "Offer A — bonus (optional)", required: false, min: 0 }),
-      amountField({ id: "bbonus", label: "Offer B — bonus (optional)", required: false, min: 0 }),
-      amountField({ id: "aother", label: "Offer A — other pay (optional)", required: false, min: 0, hint: "Allowances, stock value, etc." }),
-      amountField({ id: "bother", label: "Offer B — other pay (optional)", required: false, min: 0 }),
+      amountField({ id: "abonus", label: "Offer A — bonus", required: false, min: 0 }),
+      amountField({ id: "bbonus", label: "Offer B — bonus", required: false, min: 0 }),
+      amountField({ id: "aother", label: "Offer A — other pay", required: false, min: 0, hint: "Allowances, stock value, etc." }),
+      amountField({ id: "bother", label: "Offer B — other pay", required: false, min: 0 }),
       currencyField(),
     ],
     output: { primary: ["Offer A pays more", "Offer B pays more", "The offers are equal"] },
@@ -85,9 +88,10 @@ const salary = group({ category: "career", engineModule: "career/salary", tags: 
   },
   {
     id: "hourly-to-salary-calculator",
+    icon: "clock",
     title: "Hourly to Salary Calculator",
     h1: "Hourly to Salary Calculator",
-    shortDescription: "Convert an hourly rate to weekly, monthly and annual pay — or an annual salary to an hourly rate.",
+    shortDescription: "Convert an hourly rate to weekly, monthly and annual pay, or the reverse.",
     seoTitle: "Hourly to Salary Calculator – Hourly Rate to Annual",
     seoDescription: "Convert an hourly wage to annual, monthly, weekly and daily pay, or turn a yearly salary into an hourly rate, with your own hours and unpaid weeks off.",
     keywords: ["hourly to salary", "hourly rate", "annual salary to hourly", "wage converter", "hourly wage"],
@@ -100,7 +104,7 @@ const salary = group({ category: "career", engineModule: "career/salary", tags: 
       amountField({ id: "annual", label: "Annual salary", min: 0.01, showIf: { field: "mode", equals: "annual" } }),
       numberField({ id: "hours", label: "Hours per week", default: "40", min: 0.1, max: 168 }),
       numberField({ id: "weeks", label: "Weeks per year", default: "52", min: 1, max: 53 }),
-      numberField({ id: "off", label: "Unpaid weeks off (optional)", required: false, min: 0, max: 52, hint: "Only weeks you aren't paid for" }),
+      numberField({ id: "off", label: "Unpaid weeks off", required: false, min: 0, max: 52, hint: "Only weeks you aren't paid for" }),
       currencyField(),
     ],
     output: { primary: ["Annual pay", "Hourly rate"] },
@@ -111,13 +115,14 @@ const salary = group({ category: "career", engineModule: "career/salary", tags: 
     ],
     examples: [{ title: "25 an hour, full time", inputs: { mode: "hourly", rate: "25", annual: "", hours: "40", weeks: "52", off: "", currency: "" } }],
     assumptions: ["Overtime and different rates for different hours aren't modelled."],
-    relatedTools: ["salary-comparison-calculator", "salary-increment-calculator", "ctc-to-take-home-calculator", "salary-hike-percentage-calculator", "unit-converter"],
+    relatedTools: ["salary-comparison-calculator", "salary-increment-calculator", "ctc-to-take-home-calculator", "salary-hike-percentage-calculator", "unit-converter", "overtime-pay-calculator"],
   },
 ]);
 
 const time = group({ category: "career", engineModule: "career/time", tags: ["employment", "dates"], commercialIntent: "medium", affiliateProfile: { categories: ["jobs"] } }, [
   {
     id: "experience-calculator",
+    icon: "briefcase",
     title: "Experience Calculator",
     h1: "Work Experience Calculator",
     shortDescription: "Total work experience across several jobs, merging overlaps, in years, months and days.",
@@ -140,6 +145,7 @@ const time = group({ category: "career", engineModule: "career/time", tags: ["em
   },
   {
     id: "notice-period-calculator",
+    icon: "calendar-x",
     title: "Notice Period Calculator",
     h1: "Notice Period Calculator (Last Working Day)",
     shortDescription: "Your last day of notice from the resignation date, in calendar or working days.",
@@ -169,6 +175,7 @@ const time = group({ category: "career", engineModule: "career/time", tags: ["em
   },
   {
     id: "leave-calculator",
+    icon: "plane",
     title: "Leave Balance Calculator",
     h1: "Leave Balance Calculator",
     shortDescription: "Leave accrued so far and your remaining balance, pro-rata by day or by completed month.",
@@ -182,10 +189,10 @@ const time = group({ category: "career", engineModule: "career/time", tags: ["em
       numberField({ id: "annual", label: "Leave per year (days)", unit: "days", min: 0.5, max: 366 }),
       selectField({ id: "startMonth", label: "Leave year starts in", options: opts(["1", "January"], ["4", "April"], ["7", "July"], ["10", "October"]) }),
       selectField({ id: "method", label: "Accrual method", options: opts(["daily", "Daily (pro-rata by days)"], ["monthly", "Monthly (completed months)"]) }),
-      dateField({ id: "asof", label: "Balance as of (optional)", required: false, hint: "Leave empty for today" }),
-      dateField({ id: "joining", label: "Joining date (optional)", required: false, hint: "Only needed if you joined this leave year" }),
-      numberField({ id: "taken", label: "Leave taken (optional)", required: false, unit: "days", min: 0 }),
-      numberField({ id: "carry", label: "Carried forward (optional)", required: false, unit: "days", min: 0 }),
+      dateField({ id: "asof", label: "Balance as of", required: false, hint: "Leave empty for today" }),
+      dateField({ id: "joining", label: "Joining date", required: false, hint: "Only needed if you joined this leave year" }),
+      numberField({ id: "taken", label: "Leave taken", required: false, unit: "days", min: 0 }),
+      numberField({ id: "carry", label: "Carried forward", required: false, unit: "days", min: 0 }),
     ],
     output: { primary: ["Leave balance"] },
     formula: { expression: ["daily: accrued = annual × days elapsed ÷ days in leave year", "monthly: accrued = annual × completed months ÷ 12", "balance = accrued + carried forward − taken"], where: ["If you joined during the year, accrual starts on the joining date."], plain: "Earn leave in proportion to the time worked so far, then subtract what you've used." },
@@ -203,6 +210,7 @@ const time = group({ category: "career", engineModule: "career/time", tags: ["em
 const ctc = group({ category: "career", engineModule: "career/ctc", tags: ["ctc", "tax", "india"], commercialIntent: "high", disclaimer: "tax", affiliateProfile: { categories: ["tax", "jobs"] }, reviewal: "periodic" }, [
   {
     id: "ctc-to-take-home-calculator",
+    icon: "wallet",
     title: "CTC to Take-Home Salary Calculator (India)",
     h1: "CTC to Take-Home Salary Calculator (India, New Tax Regime)",
     shortDescription: "Estimate monthly in-hand salary from annual CTC in India under the new tax regime for FY 2026-27.",
@@ -216,8 +224,8 @@ const ctc = group({ category: "career", engineModule: "career/ctc", tags: ["ctc"
       amountField({ id: "ctc", label: "Annual CTC", min: 1 }),
       percentField({ id: "basicPct", label: "Basic pay as % of CTC", default: "40", min: 1, max: 100, hint: "Often 40–50%; check your offer letter" }),
       selectField({ id: "pf", label: "Provident fund (PF)", wide: true, options: opts(["ceiling", "12% of basic, capped at ₹15,000 basic per month"], ["full", "12% of the full basic pay"], ["none", "No PF"]) }),
-      amountField({ id: "benefits", label: "Other employer-paid benefits (optional)", required: false, min: 0, hint: "Yearly insurance, gratuity, etc. included in CTC but not paid to you" }),
-      amountField({ id: "pt", label: "Professional tax per year (optional)", required: false, default: "2400", min: 0, hint: "Varies by state — many states charge up to ₹2,400–2,500 a year; some none" }),
+      amountField({ id: "benefits", label: "Other employer-paid benefits", required: false, min: 0, hint: "Yearly insurance, gratuity, etc. included in CTC but not paid to you" }),
+      amountField({ id: "pt", label: "Professional tax per year", required: false, default: "2400", min: 0, hint: "Varies by state — many states charge up to ₹2,400–2,500 a year; some none" }),
       currencyField("INR"),
     ],
     output: { primary: ["Estimated monthly take-home"] },
@@ -245,7 +253,7 @@ const ctc = group({ category: "career", engineModule: "career/ctc", tags: ["ctc"
       note: "Checked against published summaries on the date shown; the official portal is the authority. Slabs, rebate and deductions change with each Union Budget.",
     },
     faqs: [{ q: "Why is my payslip different?", a: "Payslips include company-specific components, different PF treatment, variable-pay timing, employer NPS, reimbursements and TDS adjustments over the year. This tool uses simple, stated assumptions." }],
-    relatedTools: ["salary-hike-percentage-calculator", "salary-increment-calculator", "salary-comparison-calculator", "hourly-to-salary-calculator", "sip-calculator", "emi-calculator"],
+    relatedTools: ["salary-hike-percentage-calculator", "salary-increment-calculator", "salary-comparison-calculator", "hourly-to-salary-calculator", "sip-calculator", "emi-calculator", "loan-affordability-calculator"],
   },
 ]);
 

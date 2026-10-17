@@ -1,4 +1,6 @@
 import type { Value } from "@/lib/format";
+import type { ToolIconName } from "@/components/icon-data";
+import type { Block as MarkdownBlock } from "@/lib/markdown";
 
 export type CategoryId = "math" | "everyday" | "student" | "career" | "money" | "developer" | "exams";
 export const CATEGORY_IDS: CategoryId[] = ["math", "everyday", "student", "career", "money", "developer", "exams"];
@@ -62,6 +64,8 @@ export type ToolOutput = {
   /** Short warnings or assumptions that applied to *this* calculation. */
   notes?: string[];
   texts?: TextBlock[];
+  /** A rendered Markdown preview (a parsed tree, never raw HTML). Used by the Markdown previewer. */
+  markdown?: MarkdownBlock[];
   qr?: { matrix: boolean[][]; text: string };
   swatch?: string;
   highlight?: Highlight;
@@ -80,7 +84,8 @@ export type EngineContext = {
   random: (bytes: number) => Uint8Array;
 };
 
-export type Engine = (values: Values, ctx: EngineContext) => ToolResult;
+/** Engines are pure functions of their inputs. They may be async (the hash tool uses the browser's Web Crypto API). */
+export type Engine = (values: Values, ctx: EngineContext) => ToolResult | Promise<ToolResult>;
 export type EngineMap = Record<string, Engine>;
 
 // ---- Tool definition ---------------------------------------------------------------------------
@@ -119,13 +124,34 @@ export type EngineModule =
   | "career/salary" | "career/time" | "career/ctc"
   | "money/loans" | "money/growth" | "money/tax"
   | "developer/json" | "developer/encode" | "developer/web" | "developer/text" | "developer/regex" | "developer/qr"
-  | "exams/ssc";
+  | "exams/ssc"
+  | "math/algebra"
+  | "math/geometry"
+  | "math/numtheory"
+  | "math/statistics"
+  | "math/scientific"
+  | "everyday/time"
+  | "money/planning"
+  | "career/overtime"
+  | "developer/hash"
+  | "developer/diff"
+  | "developer/cron"
+  | "developer/more"
+  | "developer/markdown"
+  | "exams/entrance"
+  | "exams/gate"
+  | "exams/management"
+  | "exams/percentile"
+  | "exams/government"
+  | "exams/planner";
 
 export type ToolDefinition = {
   id: string;
   slug: string;
   category: CategoryId;
   title: string;
+  /** Icon name from src/components/icon-data.ts (Lucide). Shown on tool cards and the tool page header. */
+  icon: ToolIconName;
   h1: string;
   shortDescription: string;
   seoTitle: string;
@@ -157,6 +183,12 @@ export type ToolDefinition = {
   swapFields?: [string, string];
   /** Share links put the inputs in the URL fragment. Disabled for tools that handle secrets. */
   shareable: boolean;
+  /** Exams only: set for general tools that apply no exam-specific rule (so there is no scheme, source or year to cite). */
+  ruleFree?: boolean;
+  /** The real date (YYYY-MM-DD) this tool was first published. Drives the home page's "Recently added" list; leave unset if unknown. */
+  addedOn?: string;
+  /** Keep what the visitor typed in this browser (localStorage) between visits. Never leaves the device. */
+  persist?: boolean;
   reviewal: Reviewal;
   commercialIntent: CommercialIntent;
   adProfile: AdProfile;
@@ -176,6 +208,7 @@ export type ToolRuntime = {
   submitLabel: string;
   swapFields?: [string, string];
   shareable: boolean;
+  persist?: boolean;
   examples: { title: string; inputs: Record<string, string> }[];
   primaryLabel: string;
 };
@@ -188,5 +221,5 @@ export type CategoryDef = {
   seoTitle: string;
   seoDescription: string;
   intro: string[];
-  groups: { title: string; description?: string; toolIds: string[] }[];
+  groups: { title: string; description?: string; toolIds: string[]; /** Tools from other categories shown as "also useful" links. */ alsoToolIds?: string[] }[];
 };

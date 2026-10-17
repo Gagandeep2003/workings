@@ -9,6 +9,7 @@ const tenure = [
 const loans = group({ category: "money", engineModule: "money/loans", tags: ["loan", "emi", "interest"], commercialIntent: "high", disclaimer: "finance", affiliateProfile: { categories: ["loans"] } }, [
   {
     id: "emi-calculator",
+    icon: "landmark",
     title: "EMI Calculator",
     h1: "EMI Calculator (Loan, Home, Car, Personal)",
     shortDescription: "Monthly EMI, total interest and total payable for any reducing-balance loan.",
@@ -33,10 +34,11 @@ const loans = group({ category: "money", engineModule: "money/loans", tags: ["lo
     examples: [{ title: "10,00,000 at 8.5% for 20 years", inputs: { principal: "1000000", rate: "8.5", tenure: "20", tenureUnit: "years", currency: "INR" } }],
     assumptions: ["Fixed rate, equal monthly instalments, paid at the end of each month.", "Fees, insurance, taxes and prepayment charges are excluded."],
     faqs: [{ q: "Does a lower EMI mean a cheaper loan?", a: "Not necessarily. A longer tenure lowers the EMI but increases total interest. Compare the total interest figure, not just the instalment." }],
-    relatedTools: ["amortization-schedule-calculator", "loan-interest-rate-calculator", "simple-interest-calculator", "compound-interest-calculator", "sip-calculator", "ctc-to-take-home-calculator"],
+    relatedTools: ["amortization-schedule-calculator", "loan-interest-rate-calculator", "simple-interest-calculator", "compound-interest-calculator", "sip-calculator", "ctc-to-take-home-calculator", "loan-prepayment-calculator", "loan-affordability-calculator"],
   },
   {
     id: "amortization-schedule-calculator",
+    icon: "table",
     title: "Amortization Schedule Calculator",
     h1: "Loan Amortization Schedule Calculator",
     shortDescription: "Full month-by-month loan schedule, with the interest saved by paying extra each month.",
@@ -46,7 +48,7 @@ const loans = group({ category: "money", engineModule: "money/loans", tags: ["lo
     aliases: ["amortisation calculator", "loan amortization calculator", "mortgage amortization calculator", "loan repayment schedule", "prepayment calculator"],
     phrases: ["loan schedule month by month", "how much interest will i save by paying extra", "principal vs interest each month"],
     intro: "See how every payment is split between interest and principal, and what paying a little extra each month saves.",
-    inputs: [amountField({ id: "principal", label: "Loan amount", min: 1 }), percentField({ id: "rate", label: "Interest rate per year", min: 0, max: 100 }), ...tenure, amountField({ id: "extra", label: "Extra payment every month (optional)", required: false, min: 0, hint: "Goes straight to principal" }), currencyField()],
+    inputs: [amountField({ id: "principal", label: "Loan amount", min: 1 }), percentField({ id: "rate", label: "Interest rate per year", min: 0, max: 100 }), ...tenure, amountField({ id: "extra", label: "Extra payment every month", required: false, min: 0, hint: "Goes straight to principal" }), currencyField()],
     output: { primary: ["Total interest"] },
     formula: {
       expression: ["interest for the month = balance × (annual rate ÷ 12)", "principal repaid = payment − interest", "new balance = balance − principal repaid"],
@@ -60,10 +62,11 @@ const loans = group({ category: "money", engineModule: "money/loans", tags: ["lo
     ],
     examples: [{ title: "5,00,000 at 10.5% for 5 years", inputs: { principal: "500000", rate: "10.5", tenure: "5", tenureUnit: "years", extra: "", currency: "INR" } }],
     assumptions: ["Equal monthly payments on a reducing balance, no prepayment penalty, rate fixed for the whole term."],
-    relatedTools: ["emi-calculator", "loan-interest-rate-calculator", "compound-interest-calculator", "simple-interest-calculator", "sip-calculator"],
+    relatedTools: ["emi-calculator", "loan-interest-rate-calculator", "compound-interest-calculator", "simple-interest-calculator", "sip-calculator", "loan-prepayment-calculator"],
   },
   {
     id: "loan-interest-rate-calculator",
+    icon: "percent",
     title: "Loan Interest Rate Calculator",
     h1: "Loan Interest Rate Calculator (Find the Rate from the EMI)",
     shortDescription: "Find the annual interest rate hidden in a loan's monthly payment, amount and tenure.",
@@ -89,6 +92,7 @@ const loans = group({ category: "money", engineModule: "money/loans", tags: ["lo
 const growth = group({ category: "money", engineModule: "money/growth", tags: ["investing", "interest"], commercialIntent: "high", disclaimer: "finance", affiliateProfile: { categories: ["investing"] } }, [
   {
     id: "simple-interest-calculator",
+    icon: "coins",
     title: "Simple Interest Calculator",
     h1: "Simple Interest Calculator",
     shortDescription: "Simple interest and total amount from principal, rate and time in years, months or days.",
@@ -111,6 +115,7 @@ const growth = group({ category: "money", engineModule: "money/growth", tags: ["
   },
   {
     id: "compound-interest-calculator",
+    icon: "chart-line",
     title: "Compound Interest Calculator",
     h1: "Compound Interest Calculator",
     shortDescription: "Growth of a lump sum with interest on interest, for any compounding frequency.",
@@ -129,10 +134,11 @@ const growth = group({ category: "money", engineModule: "money/growth", tags: ["
     ],
     examples: [{ title: "10,000 at 5% for 10 years, monthly", inputs: { principal: "10000", rate: "5", years: "10", freq: "12", currency: "" } }],
     assumptions: ["Constant rate; no deposits or withdrawals; taxes aren't deducted.", "Table shows up to the first 100 years."],
-    relatedTools: ["simple-interest-calculator", "sip-calculator", "fd-calculator", "cagr-calculator", "inflation-calculator", "rd-calculator"],
+    relatedTools: ["simple-interest-calculator", "sip-calculator", "fd-calculator", "cagr-calculator", "inflation-calculator", "rd-calculator", "lumpsum-calculator"],
   },
   {
     id: "sip-calculator",
+    icon: "piggy-bank",
     title: "SIP Calculator",
     h1: "SIP Calculator (Systematic Investment Plan)",
     shortDescription: "Projected value of a monthly investment at an assumed return, with an optional yearly step-up.",
@@ -142,7 +148,7 @@ const growth = group({ category: "money", engineModule: "money/growth", tags: ["
     aliases: ["mutual fund calculator", "monthly investment calculator", "sip return calculator", "step up sip calculator", "investment calculator"],
     phrases: ["sip of 5000 per month for 10 years at 12%", "how much will my sip be worth", "step up sip calculation"],
     intro: "Enter a monthly amount, an assumed yearly return and the number of years for a projected maturity value.",
-    inputs: [amountField({ id: "monthly", label: "Monthly investment", min: 1 }), percentField({ id: "rate", label: "Expected return per year", min: 0, max: 100, hint: "An assumption, not a forecast" }), numberField({ id: "years", label: "Investment period (years)", unit: "years", min: 0.0834, max: 50 }), percentField({ id: "stepUp", label: "Yearly step-up (optional)", required: false, min: 0, max: 100, hint: "Raises the monthly amount each year" }), selectField({ id: "timing", label: "Investments happen", wide: true, options: opts(["start", "At the start of each month (usual SIP formula)"], ["end", "At the end of each month"]) }), currencyField()],
+    inputs: [amountField({ id: "monthly", label: "Monthly investment", min: 1 }), percentField({ id: "rate", label: "Expected return per year", min: 0, max: 100, hint: "An assumption, not a forecast" }), numberField({ id: "years", label: "Investment period (years)", unit: "years", min: 0.0834, max: 50 }), percentField({ id: "stepUp", label: "Yearly step-up", required: false, min: 0, max: 100, hint: "Raises the monthly amount each year" }), selectField({ id: "timing", label: "Investments happen", wide: true, options: opts(["start", "At the start of each month (usual SIP formula)"], ["end", "At the end of each month"]) }), currencyField()],
     output: { primary: ["Estimated maturity value"] },
     formula: { expression: ["FV = P × [((1 + i)ⁿ − 1) ÷ i] × (1 + i)", "i = annual rate ÷ 12 ÷ 100;  n = number of months"], where: ["P — monthly amount", "Step-up: P rises by the chosen percent every 12 months", "Investing at the end of each month omits the final × (1 + i)"], plain: "Each month's amount earns monthly growth for as long as it stays invested." },
     howItWorks: [
@@ -151,10 +157,11 @@ const growth = group({ category: "money", engineModule: "money/growth", tags: ["
     ],
     examples: [{ title: "5,000 a month, 12%, 10 years", inputs: { monthly: "5000", rate: "12", years: "10", stepUp: "", timing: "start", currency: "INR" } }],
     assumptions: ["Constant return every month; no fees, tax or missed instalments.", "Maximum 50 years."],
-    relatedTools: ["compound-interest-calculator", "fd-calculator", "rd-calculator", "cagr-calculator", "inflation-calculator", "emi-calculator"],
+    relatedTools: ["compound-interest-calculator", "fd-calculator", "rd-calculator", "cagr-calculator", "inflation-calculator", "emi-calculator", "lumpsum-calculator"],
   },
   {
     id: "fd-calculator",
+    icon: "vault",
     title: "FD Calculator",
     h1: "FD (Fixed Deposit) Calculator",
     shortDescription: "Maturity amount and interest on a fixed deposit with quarterly, monthly, yearly or simple interest.",
@@ -177,6 +184,7 @@ const growth = group({ category: "money", engineModule: "money/growth", tags: ["
   },
   {
     id: "rd-calculator",
+    icon: "repeat",
     title: "RD Calculator",
     h1: "RD (Recurring Deposit) Calculator",
     shortDescription: "Maturity amount of a recurring deposit with a monthly instalment and compounding.",
@@ -199,6 +207,7 @@ const growth = group({ category: "money", engineModule: "money/growth", tags: ["
   },
   {
     id: "cagr-calculator",
+    icon: "spline",
     title: "CAGR Calculator",
     h1: "CAGR Calculator (Compound Annual Growth Rate)",
     shortDescription: "The steady yearly growth rate between a starting and ending value over a period.",
@@ -217,10 +226,11 @@ const growth = group({ category: "money", engineModule: "money/growth", tags: ["
     ],
     examples: [{ title: "10,000 → 25,000 in 5 years", inputs: { begin: "10000", end: "25000", years: "5" } }],
     assumptions: ["A starting value of zero or less is invalid; an ending value of zero gives −100%."],
-    relatedTools: ["compound-interest-calculator", "sip-calculator", "percentage-change-calculator", "inflation-calculator", "fd-calculator"],
+    relatedTools: ["compound-interest-calculator", "sip-calculator", "percentage-change-calculator", "inflation-calculator", "fd-calculator", "lumpsum-calculator"],
   },
   {
     id: "inflation-calculator",
+    icon: "flame",
     title: "Inflation Calculator",
     h1: "Inflation Calculator",
     shortDescription: "Future cost of something today, the purchasing power of money later, or the inflation rate between two prices.",
@@ -254,6 +264,7 @@ const growth = group({ category: "money", engineModule: "money/growth", tags: ["
 const tax = group({ category: "money", engineModule: "money/tax", tags: ["tax", "gst"], commercialIntent: "medium", disclaimer: "tax", reviewal: "periodic", affiliateProfile: { categories: ["accounting"] } }, [
   {
     id: "gst-calculator",
+    icon: "receipt",
     title: "GST Calculator",
     h1: "GST Calculator (Add or Remove GST)",
     shortDescription: "Add GST to a price or remove it from a GST-inclusive price, with CGST, SGST and IGST split.",

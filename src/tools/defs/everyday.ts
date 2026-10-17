@@ -7,6 +7,7 @@ import type { Faq, Paragraph, ToolDefinition } from "../types";
 const dates = group({ category: "everyday", engineModule: "everyday/dates", tags: ["dates", "calendar"] }, [
   {
     id: "age-calculator",
+    icon: "cake",
     title: "Age Calculator",
     h1: "Age Calculator",
     shortDescription: "Exact age in years, months and days from a date of birth, plus the next birthday.",
@@ -16,7 +17,7 @@ const dates = group({ category: "everyday", engineModule: "everyday/dates", tags
     aliases: ["how old am i", "date of birth calculator", "calculate age", "age in years months days"],
     phrases: ["how old am i", "age from date of birth", "age on a specific date", "calculate age in days"],
     intro: "Enter a date of birth to see your age to the day — leave the second date empty to measure up to today.",
-    inputs: [dateField({ id: "dob", label: "Date of birth" }), dateField({ id: "asof", label: "Age at date (optional)", required: false, hint: "Leave empty for today's date" })],
+    inputs: [dateField({ id: "dob", label: "Date of birth" }), dateField({ id: "asof", label: "Age at date", required: false, hint: "Leave empty for today's date" })],
     output: { primary: ["Age"] },
     formula: { expression: ["age = (full years, then full months, then days) between the two dates"], where: ["Years and months are counted on the calendar; leftover days are what remains after the last full month."], plain: "Count whole years, then whole months, then the days that remain." },
     howItWorks: [
@@ -30,6 +31,7 @@ const dates = group({ category: "everyday", engineModule: "everyday/dates", tags
   },
   {
     id: "days-between-dates-calculator",
+    icon: "calendar-range",
     title: "Days Between Dates Calculator",
     h1: "Days Between Dates Calculator",
     shortDescription: "Number of days, weeks, months and years between two dates, with an include-end-date option.",
@@ -54,10 +56,11 @@ const dates = group({ category: "everyday", engineModule: "everyday/dates", tags
     examples: [{ title: "Across a leap year", inputs: { start: "2024-01-01", end: "2025-01-01", include: "no" } }],
     assumptions: ["If the end date is before the start date the two are swapped and a note says so.", "Dates only — clock times and time zones are not involved."],
     faqs: [{ q: "Does this count the start date?", a: "No by default: the difference between 1 and 2 January is one day. Switch on “include the end date” to count both days." }],
-    relatedTools: ["days-until-date-calculator", "date-add-subtract-calculator", "working-days-calculator", "age-calculator", "experience-calculator", "notice-period-calculator"],
+    relatedTools: ["days-until-date-calculator", "date-add-subtract-calculator", "working-days-calculator", "age-calculator", "experience-calculator", "notice-period-calculator", "time-duration-calculator"],
   },
   {
     id: "days-until-date-calculator",
+    icon: "calendar-clock",
     title: "Days Until Calculator",
     h1: "Days Until a Date Calculator",
     shortDescription: "Countdown in days to a future date — or days since a past one — from today's date.",
@@ -67,7 +70,7 @@ const dates = group({ category: "everyday", engineModule: "everyday/dates", tags
     aliases: ["countdown calculator", "days left calculator", "how many days until", "date countdown"],
     phrases: ["how many days until christmas", "days until my birthday", "countdown to a date", "days since"],
     intro: "Enter a date to see how many days away it is from today, using your device's calendar date.",
-    inputs: [dateField({ id: "target", label: "Date" }), textField({ id: "label", label: "Label (optional)", required: false, placeholder: "Christmas", maxLength: 40, hint: "Just names the result — it isn't saved" })],
+    inputs: [dateField({ id: "target", label: "Date" }), textField({ id: "label", label: "Label", required: false, placeholder: "Christmas", maxLength: 40, hint: "Just names the result — it isn't saved" })],
     output: { primary: ["Days until…", "Days since…", "That's today"] },
     formula: { expression: ["days remaining = target date − today's date"], where: ["Today is read from your device when you press Calculate."], plain: "A date-only subtraction on the calendar." },
     howItWorks: [
@@ -80,9 +83,10 @@ const dates = group({ category: "everyday", engineModule: "everyday/dates", tags
   },
   {
     id: "date-add-subtract-calculator",
+    icon: "calendar-plus",
     title: "Date Calculator: Add or Subtract Time",
     h1: "Add or Subtract Days, Weeks, Months and Years from a Date",
-    shortDescription: "Find the date that is a set number of years, months, weeks or days before or after a date.",
+    shortDescription: "Find the date a set number of years, months, weeks or days before or after a date.",
     seoTitle: "Add or Subtract Time from a Date – Date Calculator",
     seoDescription: "Add or subtract years, months, weeks and days from any date to find the resulting date and weekday. Handles month ends and leap years correctly.",
     keywords: ["add days to date", "subtract days from date", "date calculator", "date plus", "date minus", "what date is"],
@@ -109,6 +113,7 @@ const dates = group({ category: "everyday", engineModule: "everyday/dates", tags
   },
   {
     id: "working-days-calculator",
+    icon: "calendar-check",
     title: "Working Days Calculator",
     h1: "Working Days Calculator (Business Days)",
     shortDescription: "Count working days between two dates, or add working days to a date, with your own holidays.",
@@ -124,7 +129,7 @@ const dates = group({ category: "everyday", engineModule: "everyday/dates", tags
       dateField({ id: "end", label: "End date", showIf: { field: "mode", equals: "count" } }),
       numberField({ id: "count", label: "Working days to add", integer: true, min: 1, max: 10000, showIf: { field: "mode", equals: "add" } }),
       selectField({ id: "weekend", label: "Weekend", wide: true, options: opts(["sat-sun", "Saturday and Sunday"], ["fri-sat", "Friday and Saturday"], ["sun-only", "Sunday only"], ["none", "No weekend (every day counts)"]) }),
-      textareaField({ id: "holidays", label: "Holidays to skip (optional)", required: false, rows: 3, placeholder: "2024-01-26\n2024-08-15", hint: "Dates as YYYY-MM-DD, separated by commas or new lines", maxLength: 20000 }),
+      textareaField({ id: "holidays", label: "Holidays to skip", required: false, rows: 3, placeholder: "2024-01-26\n2024-08-15", hint: "Dates as YYYY-MM-DD, separated by commas or new lines", maxLength: 20000 }),
     ],
     output: { primary: ["Working days", "Date after…"] },
     formula: { expression: ["working days = calendar days − weekend days − holidays that fall on working days"], where: ["Both the start and end dates are included when counting."], plain: "Go day by day and count only the days that are not weekend and not a listed holiday." },
@@ -134,7 +139,7 @@ const dates = group({ category: "everyday", engineModule: "everyday/dates", tags
     ],
     examples: [{ title: "January 2024 with a holiday on the 26th", inputs: { mode: "count", start: "2024-01-01", end: "2024-01-31", weekend: "sat-sun", holidays: "2024-01-26" } }, { title: "5 working days after Friday 5 Jan 2024", inputs: { mode: "add", start: "2024-01-05", count: "5", weekend: "sat-sun", holidays: "" } }],
     assumptions: ["Holidays are only what you list. Half-days aren't supported.", "Dates only — time zones don't matter."],
-    relatedTools: ["days-between-dates-calculator", "date-add-subtract-calculator", "notice-period-calculator", "leave-calculator", "days-until-date-calculator"],
+    relatedTools: ["days-between-dates-calculator", "date-add-subtract-calculator", "notice-period-calculator", "leave-calculator", "days-until-date-calculator", "time-duration-calculator"],
   },
 ]);
 
@@ -143,6 +148,7 @@ const zoneOptions = TIME_ZONES.map((z) => ({ value: z.id, label: z.label, group:
 const timezone = group({ category: "everyday", engineModule: "everyday/timezone", tags: ["time zone", "time"] }, [
   {
     id: "timezone-converter",
+    icon: "globe",
     title: "Time Zone Converter",
     h1: "Time Zone Converter",
     shortDescription: "Convert a date and time between world time zones, handling daylight saving correctly.",
@@ -168,7 +174,7 @@ const timezone = group({ category: "everyday", engineModule: "everyday/timezone"
     ],
     examples: [{ title: "9:30 in Kolkata → New York", inputs: { date: "2026-01-15", time: "09:30", from: "Asia/Kolkata", to: "America/New_York" } }],
     assumptions: ["Uses your browser's time-zone data; far-future dates assume today's daylight-saving rules.", "A short list of widely used zones is offered rather than every zone in the database."],
-    relatedTools: ["unix-timestamp-converter", "date-add-subtract-calculator", "days-between-dates-calculator", "unit-converter", "working-days-calculator"],
+    relatedTools: ["unix-timestamp-converter", "date-add-subtract-calculator", "days-between-dates-calculator", "unit-converter", "working-days-calculator", "cron-expression-explainer"],
   },
 ]);
 
@@ -179,7 +185,7 @@ function unitOptions(categoryId: string) {
 }
 
 type ConverterContent = {
-  id: string; categoryId: string; title: string; h1: string; shortDescription: string; seoTitle: string; seoDescription: string;
+  id: string; icon: ToolDefinition["icon"]; addedOn?: string; categoryId: string; title: string; h1: string; shortDescription: string; seoTitle: string; seoDescription: string;
   keywords: string[]; aliases: string[]; phrases: string[]; intro: string; formula: ToolDefinition["formula"];
   howItWorks: Paragraph[]; example: { inputs: Record<string, string>; title: string };
   assumptions: string[]; faqs?: Faq[]; related: string[]; defaultFrom: string; defaultTo: string; allowNegative?: boolean;
@@ -188,6 +194,8 @@ type ConverterContent = {
 function converter(c: ConverterContent) {
   return {
     id: c.id,
+    icon: c.icon,
+    ...(c.addedOn ? { addedOn: c.addedOn } : {}),
     title: c.title, h1: c.h1, shortDescription: c.shortDescription, seoTitle: c.seoTitle, seoDescription: c.seoDescription,
     keywords: c.keywords, aliases: c.aliases, phrases: c.phrases, intro: c.intro,
     inputs: [
@@ -206,7 +214,7 @@ function converter(c: ConverterContent) {
 
 const converters = group({ category: "everyday", engineModule: "everyday/convert", tags: ["conversion", "units"] }, [
   converter({
-    id: "length-converter", categoryId: "length", title: "Length Converter", h1: "Length Converter",
+    id: "length-converter", icon: "ruler", categoryId: "length", title: "Length Converter", h1: "Length Converter",
     shortDescription: "Convert between kilometres, metres, centimetres, miles, yards, feet, inches and more.",
     seoTitle: "Length Converter – km, Miles, Feet, Inches, cm",
     seoDescription: "Convert length between kilometres, metres, centimetres, millimetres, miles, yards, feet, inches and nautical miles using exact international definitions.",
@@ -221,11 +229,11 @@ const converters = group({ category: "everyday", engineModule: "everyday/convert
     ],
     example: { title: "1 mile in kilometres", inputs: { value: "1", from: "mi", to: "km" } },
     assumptions: ["Metric prefixes and international imperial units only."],
-    related: ["unit-converter", "area-converter", "volume-converter", "speed-converter", "weight-converter", "speed-time-distance-calculator"],
+    related: ["unit-converter", "area-converter", "volume-converter", "speed-converter", "weight-converter", "speed-time-distance-calculator", "pace-calculator"],
     defaultFrom: "km", defaultTo: "mi", allowNegative: true,
   }),
   converter({
-    id: "weight-converter", categoryId: "mass", title: "Weight Converter", h1: "Weight and Mass Converter",
+    id: "weight-converter", icon: "weight", categoryId: "mass", title: "Weight Converter", h1: "Weight and Mass Converter",
     shortDescription: "Convert between kilograms, grams, pounds, ounces, stones, tonnes, quintals and carats.",
     seoTitle: "Weight Converter – kg to lb, Ounces, Stones, Grams",
     seoDescription: "Convert kilograms, grams, pounds, ounces, stones, tonnes, quintals, carats and short and long tons with exact factors, such as 1 lb = 0.45359237 kg.",
@@ -244,7 +252,7 @@ const converters = group({ category: "everyday", engineModule: "everyday/convert
     defaultFrom: "kg", defaultTo: "lb",
   }),
   converter({
-    id: "temperature-converter", categoryId: "temperature", title: "Temperature Converter", h1: "Temperature Converter",
+    id: "temperature-converter", icon: "thermometer", categoryId: "temperature", title: "Temperature Converter", h1: "Temperature Converter",
     shortDescription: "Convert between Celsius, Fahrenheit, Kelvin and Rankine, with absolute-zero checks.",
     seoTitle: "Temperature Converter – Celsius, Fahrenheit, Kelvin",
     seoDescription: "Convert between Celsius, Fahrenheit, Kelvin and Rankine with the exact formulas shown. Values below absolute zero are rejected as impossible.",
@@ -263,7 +271,7 @@ const converters = group({ category: "everyday", engineModule: "everyday/convert
     defaultFrom: "c", defaultTo: "f", allowNegative: true,
   }),
   converter({
-    id: "area-converter", categoryId: "area", title: "Area Converter", h1: "Area Converter",
+    id: "area-converter", icon: "maximize", categoryId: "area", title: "Area Converter", h1: "Area Converter",
     shortDescription: "Convert square metres, hectares, acres, square feet, square yards, square miles and more.",
     seoTitle: "Area Converter – Acres, Hectares, Square Feet, m²",
     seoDescription: "Convert area between square metres, hectares, acres, square feet, square yards, square kilometres, square miles and square inches with exact factors.",
@@ -282,12 +290,32 @@ const converters = group({ category: "everyday", engineModule: "everyday/convert
     defaultFrom: "ac", defaultTo: "ha",
   }),
   converter({
-    id: "volume-converter", categoryId: "volume", title: "Volume Converter", h1: "Volume Converter",
+    id: "data-storage-converter", icon: "hard-drive", addedOn: "2026-10-13", categoryId: "data", title: "Data Storage Converter", h1: "Data Storage Converter (MB, GB, TB, MiB, GiB)",
+    shortDescription: "Convert bits, bytes, KB, MB, GB, TB and the binary KiB, MiB, GiB and TiB units.",
+    seoTitle: "Data Storage Converter – MB to GB, GiB, TB, Bytes",
+    seoDescription: "Convert between bits, bytes, KB, MB, GB, TB and KiB, MiB, GiB, TiB. Decimal (1,000) and binary (1,024) units are kept separate so the numbers add up.",
+    keywords: ["data storage converter", "mb to gb", "gb to mb", "gb to gib", "tb to gb", "bytes converter"],
+    aliases: ["mb to gb converter", "gb to tb", "kb to mb", "gib to gb", "bits to bytes", "digital storage converter", "file size converter", "mib to mb"],
+    phrases: ["how many mb in a gb", "why is my 1tb drive 931gb", "gb vs gib"],
+    intro: "Convert file sizes and storage capacity, with decimal (GB) and binary (GiB) units kept clearly separate.",
+    formula: { expression: ["value in target unit = value × (bytes per source unit) ÷ (bytes per target unit)"], where: ["1 KB = 1,000 B, 1 MB = 1,000,000 B, 1 GB = 10⁹ B, 1 TB = 10¹² B", "1 KiB = 1,024 B, 1 MiB = 1,024² B, 1 GiB = 1,024³ B, 1 TiB = 1,024⁴ B", "1 byte = 8 bits"], plain: "Convert to bytes, then to the unit you want." },
+    howItWorks: [
+      "Two systems share the same letters. Storage makers and networks use decimal prefixes, where 1 GB is exactly 1,000,000,000 bytes. Operating systems have often shown capacity with binary multiples, where one gibibyte (GiB) is 1,024³ = 1,073,741,824 bytes, sometimes still labelling it \"GB\". That is why a 1 TB drive (10¹² bytes) appears as about 931 GiB — nothing is missing, the unit is simply larger.",
+      "The IEC names KiB, MiB, GiB and TiB were introduced to remove the ambiguity, and both families are listed here by name. A byte is 8 bits, and network speeds are quoted in bits per second, so a 100 Mbps connection moves at most 12.5 MB of data per second. For transfer times see [[speed-converter]]; for any other unit use the [[unit-converter]].",
+    ],
+    example: { title: "1 TB in GiB", inputs: { value: "1", from: "TB", to: "GiB" } },
+    assumptions: ["Decimal (SI) prefixes use powers of 1,000 and binary (IEC) prefixes use powers of 1,024.", "Petabytes and larger units are not included."],
+    faqs: [{ q: "Why does my 1 TB drive show about 931 GB?", a: "The drive is sold in decimal units (10¹² bytes) while the operating system shows binary units: 10¹² bytes ÷ 1,024³ ≈ 931 GiB. Use this converter with TB as the source and GiB as the target." }],
+    related: ["unit-converter", "speed-converter", "length-converter", "weight-converter", "volume-converter"],
+    defaultFrom: "GB", defaultTo: "GiB",
+  }),
+  converter({
+    id: "volume-converter", icon: "beaker", categoryId: "volume", title: "Volume Converter", h1: "Volume Converter",
     shortDescription: "Convert litres, millilitres, cubic metres, US and imperial gallons, cups, spoons and more.",
     seoTitle: "Volume Converter – Litres, Gallons, Cups, mL",
     seoDescription: "Convert litres, millilitres, cubic metres, US gallons, imperial gallons, quarts, pints, cups, fluid ounces and spoons. US and UK units kept separate.",
     keywords: ["volume converter", "liters to gallons", "ml to cups", "gallon", "litre", "cooking conversion"],
-    aliases: ["liquid converter", "litres to gallons", "cups to ml", "gallons to litres", "capacity converter"],
+    aliases: ["liquid converter", "litres to gallons", "cups to ml", "gallons to litres", "capacity converter", "cooking measurement converter", "tablespoon to ml", "teaspoon to ml"],
     phrases: ["convert litres to gallons", "how many ml in a cup", "us gallon to uk gallon"],
     intro: "Convert liquid and cooking volumes, with US and imperial (UK) units kept clearly separate.",
     formula: { expression: ["value in target unit = value × (m³ per source unit) ÷ (m³ per target unit)"], where: ["1 US gallon = 231 in³ = 3.785411784 L", "1 imperial gallon = 4.54609 L", "1 L = 0.001 m³"], plain: "Convert to cubic metres, then to the unit you want." },
@@ -301,7 +329,7 @@ const converters = group({ category: "everyday", engineModule: "everyday/convert
     defaultFrom: "l", defaultTo: "gal_us",
   }),
   converter({
-    id: "speed-converter", categoryId: "speed", title: "Speed Converter", h1: "Speed Converter",
+    id: "speed-converter", icon: "gauge", categoryId: "speed", title: "Speed Converter", h1: "Speed Converter",
     shortDescription: "Convert between km/h, mph, m/s, knots and feet per second.",
     seoTitle: "Speed Converter – km/h, mph, m/s, Knots",
     seoDescription: "Convert speed between kilometres per hour, miles per hour, metres per second, knots and feet per second. Uses exact definitions of each unit.",
@@ -316,11 +344,11 @@ const converters = group({ category: "everyday", engineModule: "everyday/convert
     ],
     example: { title: "100 km/h in mph", inputs: { value: "100", from: "kmh", to: "mph" } },
     assumptions: ["Mach number isn't included because it depends on temperature and altitude."],
-    related: ["speed-time-distance-calculator", "length-converter", "unit-converter", "fuel-economy-converter"],
+    related: ["speed-time-distance-calculator", "length-converter", "unit-converter", "fuel-economy-converter", "data-storage-converter", "pace-calculator"],
     defaultFrom: "kmh", defaultTo: "mph", allowNegative: true,
   }),
   converter({
-    id: "fuel-economy-converter", categoryId: "fuel", title: "Fuel Economy Converter", h1: "Fuel Economy Converter",
+    id: "fuel-economy-converter", icon: "fuel", categoryId: "fuel", title: "Fuel Economy Converter", h1: "Fuel Economy Converter",
     shortDescription: "Convert km/L, L/100 km, US mpg and UK mpg.",
     seoTitle: "Fuel Economy Converter – mpg, km/L, L/100km",
     seoDescription: "Convert fuel economy between kilometres per litre, litres per 100 km, US mpg and UK (imperial) mpg. Handles the reciprocal relationship correctly.",
@@ -345,6 +373,7 @@ const allUnitOptions = UNIT_CATEGORIES.flatMap((c) => c.units.map((u) => ({ valu
 const general = group({ category: "everyday", engineModule: "everyday/convert", tags: ["conversion", "units"] }, [
   {
     id: "unit-converter",
+    icon: "arrow-left-right",
     title: "Unit Converter",
     h1: "Unit Converter",
     shortDescription: "One converter for length, weight, temperature, area, volume, speed, time, data storage and fuel economy.",
@@ -371,7 +400,7 @@ const general = group({ category: "everyday", engineModule: "everyday/convert", 
     ],
     examples: [{ title: "2 hours in minutes", inputs: { category: "time", value: "2", from: "h", to: "min" } }, { title: "1 GiB in MB", inputs: { category: "data", value: "1", from: "GiB", to: "MB" } }],
     assumptions: ["Switching category resets the two unit selections.", "Results are shown to up to 10 significant digits."],
-    relatedTools: ["length-converter", "weight-converter", "temperature-converter", "volume-converter", "area-converter", "speed-converter"],
+    relatedTools: ["length-converter", "weight-converter", "temperature-converter", "volume-converter", "area-converter", "speed-converter", "data-storage-converter"],
   },
 ]);
 

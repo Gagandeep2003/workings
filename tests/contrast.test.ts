@@ -4,8 +4,10 @@ import path from "node:path";
 import { contrastRatio, parseColor } from "@/lib/color";
 
 const css = fs.readFileSync(path.join(import.meta.dirname, "../src/styles/tokens.css"), "utf8");
-const lightBlock = css.slice(css.indexOf(":root {"), css.indexOf("@media (prefers-color-scheme: dark)"));
-const darkBlock = css.slice(css.indexOf("@media (prefers-color-scheme: dark)"), css.indexOf("[data-cat="));
+const EXPLICIT_DARK = ':root[data-theme="dark"]';
+const lightBlock = css.slice(css.indexOf(":root {"), css.indexOf(EXPLICIT_DARK));
+const darkBlock = css.slice(css.indexOf(EXPLICIT_DARK), css.indexOf("@media (prefers-color-scheme: dark)"));
+const systemDarkBlock = css.slice(css.indexOf("@media (prefers-color-scheme: dark)"), css.indexOf("[data-cat="));
 
 function tokens(block: string): Record<string, string> {
   const out: Record<string, string> = {};
@@ -35,5 +37,16 @@ describe.each([["light", light], ["dark", dark]] as const)("design tokens meet W
     expect(t[fg], `${fg} token`).toBeTruthy();
     expect(t[bg], `${bg} token`).toBeTruthy();
     expect(ratio(t, fg, bg)).toBeGreaterThanOrEqual(min);
+  });
+});
+
+describe("theme blocks", () => {
+  it("the system-dark block declares exactly the same tokens as the explicit dark theme (no drift)", () => {
+    expect(tokens(systemDarkBlock)).toEqual(tokens(darkBlock));
+    expect(Object.keys(tokens(darkBlock)).length).toBeGreaterThan(30);
+  });
+  it("math has its own accent, distinct from the primary action colour, in both themes", () => {
+    expect(light["cat-math-fg"]).not.toBe(light["accent"]);
+    expect(dark["cat-math-fg"]).not.toBe(dark["accent"]);
   });
 });

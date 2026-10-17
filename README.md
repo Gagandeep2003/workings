@@ -3,10 +3,12 @@
 Calculators, converters and developer tools that show the formula behind every answer — no sign-up, no database, no backend.
 Built with Next.js (App Router) + TypeScript, statically generated, deployable to Vercel as-is.
 
-* **81 tools** in 7 categories (Math 20 · Everyday 14 · Student 11 · Career 8 · Money 11 · Developer 15 · Exams 2).
+* **127 tools** in 7 categories (Math 36 · Everyday 17 · Student 11 · Career 9 · Money 14 · Developer 23 · Exams 17).
 * Every result comes from a **deterministic, unit-tested TypeScript function**. No LLM, no API, no runtime lookups.
 * Worked examples on each page are **computed from the real engine at build time**, so they can't go stale.
 * Developer tools process everything **in the browser**; share links are disabled for them.
+* Light-first design with a persistent **light / dark / system** theme, per-tool icons, a home page built for discovery, a full `/tools` directory and global search over the whole registry.
+* **Search and AI-search ready**: per-tool metadata and canonical URLs, graph-based structured data, an automatic sitemap, `llms.txt` / `llms-full.txt` generated from the registry, and a configurable AI-crawler policy (see `docs/SEO.md`).
 * Monetization (AdSense, affiliates, direct sponsors, analytics) is **off by default** and configured only through environment variables and two small config files.
 
 ## Quick start
@@ -25,7 +27,7 @@ Deploy: import the repo into Vercel — no environment variables are required to
 | Command | What it does |
 | --- | --- |
 | `npm run dev` / `build` / `start` | Standard Next.js. `build` first runs the registry validator and **fails if any tool is incomplete**. |
-| `npm run typecheck` · `lint` · `test` | TypeScript, ESLint, Vitest (448 tests). |
+| `npm run typecheck` · `lint` · `test` | TypeScript, ESLint, Vitest (742 tests). |
 | `npm run validate:registry` | Every tool has all metadata, a valid route, working examples, related links, unique SEO text. |
 | `npm run validate:seo` | Post-build: titles, descriptions, canonicals, H1, Open Graph, JSON-LD, links, orphans, sitemap, robots, near-duplicate content. |
 | `npm run validate:a11y` | Post-build: axe-core (WCAG 2.x A/AA + best practice) over every built page. |
@@ -38,14 +40,16 @@ Deploy: import the repo into Vercel — no environment variables are required to
 
 ```
 src/
-  tools/        registry.ts, categories.ts, validate.ts, defs/<category>.ts   ← all tool metadata and content
+  tools/        registry.ts, categories.ts, home.ts, validate.ts, defs/*.ts    ← all tool metadata and content (home.ts = curated home-page lists)
   engines/      <category>/*.ts, loaders.ts                                    ← pure calculation functions (no UI)
-  lib/          numeric, dates, tz, units, format, form, search, seo, analytics, monetization/
-  components/   layout/, tool/ (ToolRunner, ResultView, Fields…), monetization/
+  lib/          numeric, dates, tz, units, format, form, search, seo, llms, expr, primes, markdown, analytics, monetization/
+  components/   layout/ (Header, Footer, ThemeToggle), tool/ (ToolRunner, ResultView, MarkdownView…), ToolCard, icon-data.ts (generated Lucide icons), monetization/
   config/       monetization.ts, affiliates.ts, sponsors.ts
-  app/          pages: / · /[category] · /[category]/[slug] · /search · legal pages · sitemap · robots
+  app/          pages: / · /tools · /[category] · /[category]/[slug] · /search · legal pages · sitemap · robots · llms.txt · llms-full.txt
   styles/       tokens.css (design tokens), base.css, components.css
-scripts/        validation scripts      tests/  Vitest      qa/  Playwright browser checks      docs/  guides
+scripts/        validation scripts, gen-icons.ts      tests/  Vitest      qa/  Playwright browser checks      docs/  guides
 ```
 
-More: `docs/ADDING_A_TOOL.md` · `docs/PRECISION.md` · `docs/SEO.md` · `docs/MONETIZATION.md` · `docs/CONTENT_CHECKLIST.md` · `docs/QA.md` · `docs/AUDIT.md` · `MAINTENANCE.md`.
+Browser checks (Chromium via Playwright, run against `npm start -p 3100`): `qa/overflow.py`, `qa/interact.py`, `qa/axe.py`, `qa/alltools.py`, `qa/redesign.py` (theme, search-opens-every-tool, narrow-screen overflow).
+
+More: `docs/REDESIGN-2026-10.md` (what changed and why) · `docs/ADDING_A_TOOL.md` · `docs/PRECISION.md` · `docs/SEO.md` · `docs/MONETIZATION.md` · `docs/CONTENT_CHECKLIST.md` · `docs/QA.md` · `docs/AUDIT.md` · `MAINTENANCE.md`.

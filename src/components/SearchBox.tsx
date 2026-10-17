@@ -92,7 +92,7 @@ export function SearchBox({ variant, placeholder = "Search tools…", autoFocus,
   };
 
   const panelVisible = open && (index !== null || failed);
-  const statusText = !index ? (failed ? "" : "Loading tools…") : trimmed ? `${results.length} result${results.length === 1 ? "" : "s"}` : "Popular tools";
+  const statusText = !open ? "" : !index ? (failed ? "" : "Loading tools…") : trimmed ? `${results.length} result${results.length === 1 ? "" : "s"}` : "Popular tools";
 
   return (
     <div className={`search search--${variant}`} ref={wrapRef}>

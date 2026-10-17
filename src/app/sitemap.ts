@@ -13,7 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const entries: MetadataRoute.Sitemap = [{ url: absoluteUrl("/") }];
   for (const c of CATEGORIES) entries.push({ url: absoluteUrl(`/${c.id}`) });
   for (const t of TOOLS) {
-    const last = t.lastModified ?? t.regulatory?.reviewedOn;
+    const last = t.lastModified ?? t.regulatory?.reviewedOn ?? t.addedOn; // only real dates: modified, reviewed, or first published
     entries.push(last ? { url: absoluteUrl(toolPath(t)), lastModified: last } : { url: absoluteUrl(toolPath(t)) });
   }
   for (const p of STATIC_PAGES) entries.push(LEGAL.has(p.path) ? { url: absoluteUrl(p.path), lastModified: SITE.legalUpdated } : { url: absoluteUrl(p.path) });

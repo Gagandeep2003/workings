@@ -6,6 +6,7 @@ const NEG = { allowNegative: true } as const;
 const percentage = group({ category: "math", engineModule: "math/percentage", tags: ["percent", "percentage"] }, [
   {
     id: "percentage-calculator",
+    icon: "percent",
     title: "Percentage Calculator",
     h1: "Percentage Calculator",
     shortDescription: "Find X% of a number, what percent one number is of another, or the whole from a part.",
@@ -42,10 +43,11 @@ const percentage = group({ category: "math", engineModule: "math/percentage", ta
     ],
     assumptions: ["Results are shown to at most 6 decimal places (percentages to 4) and trailing zeros are dropped.", "Negative numbers are allowed and follow the same formulas."],
     faqs: [{ q: "How do I calculate a percentage of a number without a calculator?", a: "Find 10% by moving the decimal point one place left, then build up: 5% is half of that, 1% is a tenth. 15% of 200 is 20 + 10 = 30." }],
-    relatedTools: ["percentage-increase-calculator", "percentage-decrease-calculator", "percentage-change-calculator", "fraction-to-percentage-calculator", "discount-calculator", "profit-loss-calculator", "marks-percentage-calculator"],
+    relatedTools: ["percentage-increase-calculator", "percentage-decrease-calculator", "percentage-change-calculator", "fraction-to-percentage-calculator", "discount-calculator", "profit-loss-calculator", "marks-percentage-calculator", "percentage-error-calculator"],
   },
   {
     id: "percentage-increase-calculator",
+    icon: "trending-up",
     title: "Percentage Increase Calculator",
     h1: "Percentage Increase Calculator",
     shortDescription: "Find the percentage increase between two values, or add a percentage to a number.",
@@ -79,6 +81,7 @@ const percentage = group({ category: "math", engineModule: "math/percentage", ta
   },
   {
     id: "percentage-decrease-calculator",
+    icon: "trending-down",
     title: "Percentage Decrease Calculator",
     h1: "Percentage Decrease Calculator",
     shortDescription: "Find the percentage drop between two values, or take a percentage off a number.",
@@ -112,6 +115,7 @@ const percentage = group({ category: "math", engineModule: "math/percentage", ta
   },
   {
     id: "percentage-change-calculator",
+    icon: "arrow-up-down",
     title: "Percentage Change Calculator",
     h1: "Percentage Change Calculator",
     shortDescription: "Signed percentage change from a starting value to a new value, up or down.",
@@ -139,6 +143,7 @@ const percentage = group({ category: "math", engineModule: "math/percentage", ta
   },
   {
     id: "percentage-difference-calculator",
+    icon: "diff",
     title: "Percentage Difference Calculator",
     h1: "Percentage Difference Calculator",
     shortDescription: "How different two values are, as a percentage of their average — order doesn't matter.",
@@ -168,6 +173,7 @@ const percentage = group({ category: "math", engineModule: "math/percentage", ta
 const fractions = group({ category: "math", engineModule: "math/fractions", tags: ["fraction"] }, [
   {
     id: "fraction-calculator",
+    icon: "divide",
     title: "Fraction Calculator",
     h1: "Fraction Calculator",
     shortDescription: "Add, subtract, multiply and divide fractions and mixed numbers, simplified automatically.",
@@ -183,8 +189,8 @@ const fractions = group({ category: "math", engineModule: "math/fractions", tags
       selectField({ id: "op", label: "Operation", wide: true, options: opts(["add", "+  Add"], ["sub", "−  Subtract"], ["mul", "×  Multiply"], ["div", "÷  Divide"]) }),
       numberField({ id: "n2", label: "Second fraction — numerator", integer: true, ...NEG }),
       numberField({ id: "d2", label: "Second fraction — denominator", integer: true, min: 1 }),
-      numberField({ id: "w1", label: "First whole number (optional)", integer: true, required: false, hint: "For mixed numbers like 2 ¾", ...NEG }),
-      numberField({ id: "w2", label: "Second whole number (optional)", integer: true, required: false, ...NEG }),
+      numberField({ id: "w1", label: "First whole number", integer: true, required: false, hint: "For mixed numbers like 2 ¾", ...NEG }),
+      numberField({ id: "w2", label: "Second whole number", integer: true, required: false, ...NEG }),
     ],
     output: { primary: ["Result"] },
     formula: {
@@ -199,10 +205,11 @@ const fractions = group({ category: "math", engineModule: "math/fractions", tags
     ],
     examples: [{ title: "1/2 + 1/3", inputs: { n1: "1", d1: "2", op: "add", n2: "1", d2: "3" } }, { title: "1 1/2 + 2 3/4", inputs: { n1: "1", d1: "2", op: "add", n2: "3", d2: "4", w1: "1", w2: "2" } }],
     assumptions: ["Denominators must be positive whole numbers. To enter a negative fraction put the minus sign on the numerator.", "In a mixed number the fraction part must be positive; put the minus sign on the whole number."],
-    relatedTools: ["fraction-to-decimal-calculator", "decimal-to-fraction-calculator", "fraction-to-percentage-calculator", "ratio-calculator", "hcf-lcm-calculator", "proportion-calculator"],
+    relatedTools: ["fraction-to-decimal-calculator", "decimal-to-fraction-calculator", "fraction-to-percentage-calculator", "ratio-calculator", "hcf-lcm-calculator", "proportion-calculator", "remainder-calculator"],
   },
   {
     id: "fraction-to-decimal-calculator",
+    icon: "arrow-right-left",
     title: "Fraction to Decimal Calculator",
     h1: "Fraction to Decimal Calculator",
     shortDescription: "Convert a fraction to a decimal, including the repeating part.",
@@ -226,6 +233,7 @@ const fractions = group({ category: "math", engineModule: "math/fractions", tags
   },
   {
     id: "decimal-to-fraction-calculator",
+    icon: "arrow-left-right",
     title: "Decimal to Fraction Calculator",
     h1: "Decimal to Fraction Calculator",
     shortDescription: "Turn a decimal — even a repeating one — into an exact fraction in lowest terms.",
@@ -237,7 +245,7 @@ const fractions = group({ category: "math", engineModule: "math/fractions", tags
     intro: "Write the decimal over a power of ten and simplify; for repeating decimals, enter the repeating digits separately.",
     inputs: [
       textField({ id: "decimal", label: "Decimal", placeholder: "0.75", hint: "For a repeating decimal enter the non-repeating part here, such as 0.1 for 0.1666…", maxLength: 40 }),
-      textField({ id: "repeating", label: "Repeating digits (optional)", required: false, placeholder: "6", hint: "The digits that repeat forever, such as 6 or 142857", maxLength: 14 }),
+      textField({ id: "repeating", label: "Repeating digits", required: false, placeholder: "6", hint: "The digits that repeat forever, such as 6 or 142857", maxLength: 14 }),
     ],
     output: { primary: ["Fraction"] },
     formula: {
@@ -256,6 +264,7 @@ const fractions = group({ category: "math", engineModule: "math/fractions", tags
   },
   {
     id: "fraction-to-percentage-calculator",
+    icon: "percent-diamond",
     title: "Fraction to Percentage Calculator",
     h1: "Fraction to Percentage Calculator",
     shortDescription: "Convert a fraction to a percentage and a decimal.",
@@ -282,6 +291,7 @@ const fractions = group({ category: "math", engineModule: "math/fractions", tags
 const numbers = group({ category: "math", engineModule: "math/numbers", tags: ["numbers"] }, [
   {
     id: "ratio-calculator",
+    icon: "scale",
     title: "Ratio Calculator",
     h1: "Ratio Calculator",
     shortDescription: "Simplify a ratio to lowest terms, or split an amount in a given ratio.",
@@ -309,10 +319,11 @@ const numbers = group({ category: "math", engineModule: "math/numbers", tags: ["
     ],
     examples: [{ title: "Simplify 12 : 18 : 30", inputs: { mode: "simplify", terms: "12:18:30" } }, { title: "Split 100 as 2 : 3", inputs: { mode: "split", terms: "2:3", total: "100" } }],
     assumptions: ["Terms can't be negative, and at least one must be greater than zero.", "Decimals are handled up to 6 decimal places."],
-    relatedTools: ["proportion-calculator", "fraction-calculator", "hcf-lcm-calculator", "percentage-calculator", "fraction-to-percentage-calculator", "profit-loss-calculator"],
+    relatedTools: ["proportion-calculator", "fraction-calculator", "hcf-lcm-calculator", "percentage-calculator", "fraction-to-percentage-calculator", "profit-loss-calculator", "scientific-calculator"],
   },
   {
     id: "proportion-calculator",
+    icon: "variable",
     title: "Proportion Calculator",
     h1: "Proportion Calculator",
     shortDescription: "Solve for the missing value in direct or inverse proportion (A/B = C/D).",
@@ -338,10 +349,11 @@ const numbers = group({ category: "math", engineModule: "math/numbers", tags: ["
     ],
     examples: [{ title: "2 : 3 = 4 : ?", inputs: { kind: "direct", a: "2", b: "3", c: "4" } }, { title: "6 workers, 10 days → 12 workers", inputs: { kind: "inverse", a: "6", b: "10", c: "12" } }],
     assumptions: ["Exactly three boxes must be filled in.", "Cases that would need division by zero are rejected with a message naming the box."],
-    relatedTools: ["ratio-calculator", "percentage-calculator", "time-and-work-calculator", "speed-time-distance-calculator", "fraction-calculator"],
+    relatedTools: ["ratio-calculator", "percentage-calculator", "time-and-work-calculator", "speed-time-distance-calculator", "fraction-calculator", "linear-equation-solver"],
   },
   {
     id: "average-calculator",
+    icon: "sigma",
     title: "Average Calculator",
     h1: "Average Calculator",
     shortDescription: "Mean, median, mode, range, sum and count for a list of numbers.",
@@ -360,10 +372,11 @@ const numbers = group({ category: "math", engineModule: "math/numbers", tags: ["
     ],
     examples: [{ title: "Five test scores", inputs: { numbers: "12, 15, 15, 18, 20" } }],
     assumptions: ["Thousands separators aren't accepted inside the list (they would be read as list separators)."],
-    relatedTools: ["weighted-average-calculator", "percentage-difference-calculator", "marks-percentage-calculator", "probability-calculator", "ratio-calculator"],
+    relatedTools: ["weighted-average-calculator", "percentage-difference-calculator", "marks-percentage-calculator", "probability-calculator", "ratio-calculator", "standard-deviation-calculator"],
   },
   {
     id: "weighted-average-calculator",
+    icon: "chart-no-axes-column",
     title: "Weighted Average Calculator",
     h1: "Weighted Average Calculator",
     shortDescription: "Average values that count for different amounts, such as graded assignments.",
@@ -386,6 +399,7 @@ const numbers = group({ category: "math", engineModule: "math/numbers", tags: ["
   },
   {
     id: "hcf-lcm-calculator",
+    icon: "hash",
     title: "HCF and LCM Calculator",
     h1: "HCF and LCM Calculator",
     shortDescription: "Highest common factor (GCD) and lowest common multiple of two or more numbers, with prime factors.",
@@ -405,10 +419,11 @@ const numbers = group({ category: "math", engineModule: "math/numbers", tags: ["
     ],
     examples: [{ title: "12, 18 and 24", inputs: { numbers: "12 18 24" } }],
     assumptions: ["Only positive whole numbers are accepted.", "Co-prime numbers (HCF 1) are flagged in a note."],
-    relatedTools: ["fraction-calculator", "ratio-calculator", "permutation-combination-calculator", "proportion-calculator", "time-and-work-calculator"],
+    relatedTools: ["fraction-calculator", "ratio-calculator", "permutation-combination-calculator", "proportion-calculator", "time-and-work-calculator", "prime-factorization-calculator", "prime-number-checker"],
   },
   {
     id: "permutation-combination-calculator",
+    icon: "shuffle",
     title: "Permutation and Combination Calculator",
     h1: "Permutation and Combination Calculator (nPr and nCr)",
     shortDescription: "nPr and nCr, with and without repetition, calculated exactly for large values.",
@@ -432,6 +447,7 @@ const numbers = group({ category: "math", engineModule: "math/numbers", tags: ["
   },
   {
     id: "probability-calculator",
+    icon: "dices",
     title: "Probability Calculator",
     h1: "Probability Calculator",
     shortDescription: "Single events, two events (independent or exclusive) and repeated trials (binomial).",
@@ -472,6 +488,7 @@ const numbers = group({ category: "math", engineModule: "math/numbers", tags: ["
 const commerce = group({ category: "math", engineModule: "math/commerce", tags: ["shopping", "price"] }, [
   {
     id: "profit-loss-calculator",
+    icon: "banknote",
     title: "Profit and Loss Calculator",
     h1: "Profit and Loss Calculator",
     shortDescription: "Profit or loss and its percentage from cost and selling price, or find either price.",
@@ -503,6 +520,7 @@ const commerce = group({ category: "math", engineModule: "math/commerce", tags: 
   },
   {
     id: "discount-calculator",
+    icon: "tag",
     title: "Discount Calculator",
     h1: "Discount Calculator",
     shortDescription: "Sale price after one or two discounts and tax, or the discount percentage from two prices.",
@@ -516,8 +534,8 @@ const commerce = group({ category: "math", engineModule: "math/commerce", tags: 
       selectField({ id: "mode", label: "What do you want to find?", wide: true, options: opts(["price", "Price after discount"], ["percent", "Discount % from original and sale price"]) }),
       numberField({ id: "price", label: "Original price", showIf: { field: "mode", equals: "price" }, group: true }),
       percentField({ id: "d1", label: "Discount", min: 0, max: 100, showIf: { field: "mode", equals: "price" } }),
-      percentField({ id: "d2", label: "Extra discount (optional)", required: false, min: 0, max: 100, hint: "Applied after the first discount", showIf: { field: "mode", equals: "price" } }),
-      percentField({ id: "tax", label: "Tax / GST (optional)", required: false, min: 0, max: 100, showIf: { field: "mode", equals: "price" } }),
+      percentField({ id: "d2", label: "Extra discount", required: false, min: 0, max: 100, hint: "Applied after the first discount", showIf: { field: "mode", equals: "price" } }),
+      percentField({ id: "tax", label: "Tax / GST", required: false, min: 0, max: 100, showIf: { field: "mode", equals: "price" } }),
       numberField({ id: "original", label: "Original price", showIf: { field: "mode", equals: "percent" }, group: true }),
       numberField({ id: "sale", label: "Sale price", showIf: { field: "mode", equals: "percent" }, group: true }),
       currencyField(),
@@ -538,6 +556,7 @@ const commerce = group({ category: "math", engineModule: "math/commerce", tags: 
 const motion = group({ category: "math", engineModule: "math/motion", tags: ["speed", "work", "aptitude"] }, [
   {
     id: "speed-time-distance-calculator",
+    icon: "gauge",
     title: "Speed, Time and Distance Calculator",
     h1: "Speed, Time and Distance Calculator",
     shortDescription: "Find speed, time or distance when you know the other two, in your choice of units.",
@@ -563,10 +582,11 @@ const motion = group({ category: "math", engineModule: "math/motion", tags: ["sp
     ],
     examples: [{ title: "60 km/h for 2.5 hours", inputs: { solve: "distance", distUnit: "km", timeUnit: "h", speed: "60", time: "2.5" } }],
     assumptions: ["Speed is assumed constant over the whole time."],
-    relatedTools: ["speed-converter", "time-and-work-calculator", "proportion-calculator", "unit-converter", "fuel-economy-converter"],
+    relatedTools: ["speed-converter", "time-and-work-calculator", "proportion-calculator", "unit-converter", "fuel-economy-converter", "pace-calculator"],
   },
   {
     id: "time-and-work-calculator",
+    icon: "hammer",
     title: "Time and Work Calculator",
     h1: "Time and Work Calculator",
     shortDescription: "How long a job takes when several workers share it, or one worker's missing time.",
@@ -580,7 +600,7 @@ const motion = group({ category: "math", engineModule: "math/motion", tags: ["sp
       selectField({ id: "mode", label: "What do you want to find?", wide: true, options: opts(["together", "Days to finish together (2–3 workers)"], ["missing", "Days one worker takes alone (team time known)"], ["partial", "Total days when B joins A part-way"]) }),
       numberField({ id: "a", label: "Worker A alone (days)", unit: "days", min: 0.0001, showIf: { field: "mode", equals: "together" } }),
       numberField({ id: "b", label: "Worker B alone (days)", unit: "days", min: 0.0001, showIf: { field: "mode", equals: "together" } }),
-      numberField({ id: "c", label: "Worker C alone (optional)", unit: "days", min: 0.0001, required: false, showIf: { field: "mode", equals: "together" } }),
+      numberField({ id: "c", label: "Worker C alone", unit: "days", min: 0.0001, required: false, showIf: { field: "mode", equals: "together" } }),
       numberField({ id: "t", label: "Days the team takes together", unit: "days", min: 0.0001, showIf: { field: "mode", equals: "missing" } }),
       numberField({ id: "a2", label: "Days the first worker takes alone", unit: "days", min: 0.0001, showIf: { field: "mode", equals: "missing" } }),
       numberField({ id: "a3", label: "A alone (days)", unit: "days", min: 0.0001, showIf: { field: "mode", equals: "partial" } }),

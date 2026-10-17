@@ -1,6 +1,8 @@
 import { group } from "../define";
 import { numberField } from "../inputs";
 import { CGL_TIER1_SECTIONS, CHSL_TIER1_SECTIONS } from "@/engines/exams/ssc";
+import { entranceTools } from "./exams-entrance";
+import { plannerTools, recruitmentTools } from "./exams-recruitment";
 
 const sectionInputs = (sections: readonly { id: string; label: string }[]) =>
   sections.flatMap((s) => [
@@ -11,6 +13,7 @@ const sectionInputs = (sections: readonly { id: string; label: string }[]) =>
 const ssc = group({ category: "exams", engineModule: "exams/ssc", tags: ["ssc", "exam", "india"], reviewal: "periodic", disclaimer: "exam", commercialIntent: "medium", affiliateProfile: { categories: ["exam-prep"], maxItems: 1 } }, [
   {
     id: "ssc-cgl-tier-1-score-calculator",
+    icon: "award",
     title: "SSC CGL Tier 1 Score Calculator",
     h1: "SSC CGL Tier-I Score Calculator (2025 Pattern)",
     shortDescription: "Raw Tier-I score from correct and wrong answers per section, using the SSC CGL 2025 marking scheme.",
@@ -44,10 +47,11 @@ const ssc = group({ category: "exams", engineModule: "exams/ssc", tags: ["ssc", 
       ],
       note: "Scheme confirmed from secondary summaries of the notification dated 9 June 2025; the official notice is the authority. Effective date is the notification date.",
     },
-    relatedTools: ["ssc-chsl-tier-1-score-calculator", "exam-score-calculator", "marks-percentage-calculator", "required-marks-calculator", "percentage-calculator"],
+    relatedTools: ["ssc-chsl-tier-1-score-calculator", "exam-score-calculator", "marks-percentage-calculator", "required-marks-calculator", "percentage-calculator", "ssc-mts-score-calculator", "target-score-planner"],
   },
   {
     id: "ssc-chsl-tier-1-score-calculator",
+    icon: "notebook-pen",
     title: "SSC CHSL Tier 1 Score Calculator",
     h1: "SSC CHSL Tier-I Score Calculator (2025 Pattern)",
     shortDescription: "Raw Tier-I score from correct and wrong answers per section, using the SSC CHSL 2025 marking scheme.",
@@ -80,8 +84,8 @@ const ssc = group({ category: "exams", engineModule: "exams/ssc", tags: ["ssc", 
       ],
       note: "Scheme confirmed from secondary summaries of the 2025 notification (released 27 May 2025); the official notice is the authority.",
     },
-    relatedTools: ["ssc-cgl-tier-1-score-calculator", "exam-score-calculator", "marks-percentage-calculator", "required-marks-calculator", "percentage-calculator"],
+    relatedTools: ["ssc-cgl-tier-1-score-calculator", "exam-score-calculator", "marks-percentage-calculator", "required-marks-calculator", "percentage-calculator", "ssc-mts-score-calculator", "banking-prelims-score-calculator"],
   },
 ]);
 
-export const examTools = [...ssc];
+export const examTools = [...entranceTools, ...ssc, ...recruitmentTools, ...plannerTools];

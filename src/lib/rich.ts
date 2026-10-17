@@ -14,3 +14,10 @@ export function parseRich(text: string): RichPart[] {
   if (last < text.length) parts.push({ t: "text", v: text.slice(last) });
   return parts;
 }
+
+/** Flatten tool copy to plain text (for structured data and text exports): links become their label or tool title, code loses its backticks. */
+export function plainText(text: string, titleOf: (id: string) => string | undefined = () => undefined): string {
+  return parseRich(text)
+    .map((p) => (p.t === "link" ? p.label ?? titleOf(p.id) ?? p.id.replace(/-/g, " ") : p.v))
+    .join("");
+}

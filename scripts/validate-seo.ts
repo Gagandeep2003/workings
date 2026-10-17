@@ -73,28 +73,55 @@ for (const { route, html } of pages) {
   const isCategory = CATEGORIES.some((c) => `/${c.id}` === route);
   const ld = $('script[type="application/ld+json"]').toArray().map((el) => $(el).text());
   const kinds: string[] = [];
+  /** Schema keys this site must never emit: ratings, reviews and prices would be invented. Checked as KEYS, not words, so legitimate text such as "job offer" is fine. */
+  const FORBIDDEN_KEYS = new Set(["aggregateRating", "review", "reviews", "reviewRating", "reviewBody", "ratingValue", "ratingCount", "reviewCount", "bestRating", "worstRating", "offers", "offer", "price", "priceCurrency", "priceRange"]);
+  const forbiddenKey = (v: unknown): string | null => {
+    if (Array.isArray(v)) { for (const x of v) { const k = forbiddenKey(x); if (k) return k; } return null; }
+    if (v && typeof v === "object") {
+      for (const [k, val] of Object.entries(v)) { if (FORBIDDEN_KEYS.has(k)) return k; const inner = forbiddenKey(val); if (inner) return inner; }
+    }
+    return null;
+  };
+  const visibleText = $("body").text().replace(/\s+/g, " ");
   for (const raw of ld) {
     try {
       const data = JSON.parse(raw);
       if (data["@context"] !== "https://schema.org") r.error(route, "JSON-LD missing @context https://schema.org");
-      kinds.push(data["@type"]);
-      if (data["@type"] === "BreadcrumbList") {
-        const items = data.itemListElement as { position: number; name: string; item: string }[];
-        if (!Array.isArray(items) || items.length < 2) r.error(route, "BreadcrumbList needs at least 2 items");
-        else {
-          items.forEach((it, i) => {
-            if (it.position !== i + 1) r.error(route, "BreadcrumbList positions aren't sequential");
-            if (!it.name || !/^https?:\/\//.test(it.item)) r.error(route, "BreadcrumbList item missing name or absolute URL");
-          });
-          if (items[items.length - 1].item !== expectedCanonical) r.error(route, "last BreadcrumbList item isn't the page itself");
+      const nodes: Record<string, unknown>[] = Array.isArray(data["@graph"]) ? data["@graph"] : [data];
+      const bad = forbiddenKey(data);
+      if (bad) r.error(route, `structured data contains "${bad}", a rating/review/price property this site must never invent`);
+      for (const node of nodes) {
+        const type = node["@type"] as string;
+        kinds.push(type);
+        if (type === "BreadcrumbList") {
+          const items = node.itemListElement as { position: number; name: string; item: string }[];
+          if (!Array.isArray(items) || items.length < 2) r.error(route, "BreadcrumbList needs at least 2 items");
+          else {
+            items.forEach((it, i) => {
+              if (it.position !== i + 1) r.error(route, "BreadcrumbList positions aren't sequential");
+              if (!it.name || !/^https?:\/\//.test(it.item)) r.error(route, "BreadcrumbList item missing name or absolute URL");
+            });
+            if (items[items.length - 1].item !== expectedCanonical) r.error(route, "last BreadcrumbList item isn't the page itself");
+          }
+        }
+        if (type === "WebApplication") {
+          if (node.url !== expectedCanonical) r.error(route, "WebApplication url isn't the canonical URL");
+          if (node.isAccessibleForFree !== true) r.error(route, "WebApplication must state isAccessibleForFree: true");
+          const tool = TOOLS.find((t) => toolPath(t) === route);
+          if (tool && node.name !== tool.title) r.error(route, "WebApplication name doesn't match the page's tool");
+        }
+        if (type === "FAQPage") {
+          // markup must describe what the visitor can see
+          for (const q of ((node.mainEntity as { name: string }[]) ?? [])) if (!visibleText.includes(q.name.replace(/\s+/g, " "))) r.error(route, `FAQPage question isn't visible on the page: "${q.name}"`);
         }
       }
-      if (/aggregateRating|"review"|offers/i.test(raw)) r.error(route, "structured data contains rating/review/offer markup, which this site must never invent");
     } catch (e) {
       r.error(route, `malformed JSON-LD: ${(e as Error).message}`);
     }
   }
   if ((isTool || isCategory) && !kinds.includes("BreadcrumbList")) r.error(route, "missing BreadcrumbList structured data");
+  if (isTool && !kinds.includes("WebApplication")) r.error(route, "missing WebApplication structured data");
+  if (isTool && kinds.includes("FAQPage") !== ($("#faq-title").length > 0)) r.error(route, "FAQPage markup and the visible FAQ section must appear together");
   if ((isTool || isCategory) && !$('nav[aria-label="Breadcrumb"] li').length) r.error(route, "missing visible breadcrumb navigation");
 
   // related tools
@@ -157,7 +184,7 @@ else {
     if (!u.lastmod) continue;
     if (!/^\d{4}-\d{2}-\d{2}/.test(u.lastmod)) r.error("/sitemap.xml", `bad lastmod ${u.lastmod}`);
     const tool = TOOLS.find((t) => `${SITE.url}${toolPath(t)}` === u.loc);
-    if (tool && !(tool.lastModified || tool.regulatory)) r.error("/sitemap.xml", `lastmod on ${u.loc} without a real review/modification date (fake freshness)`);
+    if (tool && !(tool.lastModified || tool.regulatory || tool.addedOn)) r.error("/sitemap.xml", `lastmod on ${u.loc} without a real review/modification date (fake freshness)`);
     if (u.lastmod.slice(0, 10) > new Date().toISOString().slice(0, 10)) r.error("/sitemap.xml", `lastmod ${u.lastmod} is in the future`);
   }
 }

@@ -22,3 +22,19 @@ A tool is **one metadata entry + one pure function**. No page file is copied.
 4. **Write tests** in `tests/engines.<category>.test.ts`: normal values, decimals, zero, boundaries, rounding, invalid input, errors.
    Compute expected values independently (a Python `decimal` script, a textbook example) — not by copying the function's output.
 5. Run `npm run verify`. The registry validator fails the build if any required field, route, link, example or label is wrong.
+
+## Fields added in the October 2026 redesign
+
+* `icon` (required) — a Lucide icon name, shown on cards and the tool page. Names live in `src/components/icon-data.ts`, which is **generated**: add the name to `TOOL` in
+  `scripts/gen-icons.ts`, then run `npx tsx scripts/gen-icons.ts /path/to/lucide-static/icons` (get the folder with `npm pack lucide-static`). Only listed icons are copied.
+* `addedOn` — the real date (`YYYY-MM-DD`) you publish the tool. It feeds "Recently added" and `datePublished`/sitemap `lastmod`. Never invent one; leave it off if unknown.
+* `shortDescription` must be **8–18 words** (it fits a card) — the validator enforces it. `output.primary` labels may end in `…` to match a prefix.
+* `ruleFree: true` — exams only: for general tools (planners, trackers) that apply no exam-specific rule, so no `regulatory` block is needed. Every other exam tool must cite its rule.
+* `persist: true` — keep the visitor's entries in `localStorage` (device only). Don't use it for tools that handle secrets.
+* Engines may be `async` (the hash tool uses the Web Crypto API). Tests call them with `runAsync` from `tests/util.ts`.
+* A category group may list `alsoToolIds` — tools from other categories shown as "also useful" (the Exams hub uses this for the generic score and percentage tools).
+* The curated home-page lists (popular, spotlight sections, search chips) are in `src/tools/home.ts`; the registry validator checks every id there.
+* New tools need **inbound links**: add the new id to the `relatedTools` of two or three existing tools it naturally follows, or the validator reports it as an orphan.
+* For exam tools, verify the scheme against the official notice (or, if you can't open it, several independent sources) **before** writing the engine; say what you couldn't verify in `regulatory.note`
+  and add the tool to the table in `MAINTENANCE.md`. Where sources disagree, make the disputed value an input or show both outcomes instead of choosing silently.
+

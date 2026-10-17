@@ -11,6 +11,9 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { AnalyticsConfigurator } from "@/components/Analytics";
 
+/** Applies the saved theme before first paint (no flash). Reads only a "light" / "dark" value from this browser. */
+const THEME_SCRIPT = `(function(){try{var t=localStorage.getItem("workings-theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}})()`;
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: { default: `${SITE.name} — ${SITE.tagline}`, template: `%s | ${SITE.name}` },
@@ -32,7 +35,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const m = getMonetization();
   const pub = getPublicMonetization();
   return (
-    <html lang={SITE.locale}>
+    <html lang={SITE.locale} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body>
         <a className="skip-link" href="#main">Skip to content</a>
         <AnalyticsConfigurator config={pub.analytics} />

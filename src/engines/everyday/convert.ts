@@ -64,5 +64,6 @@ export const engines: EngineMap = {
   "volume-converter": makeConverter("volume"),
   "speed-converter": makeConverter("speed"),
   "fuel-economy-converter": makeConverter("fuel"),
+  "data-storage-converter": makeConverter("data"),
   "unit-converter": (v, ctx) => makeConverter(str(v, "category"))(v, ctx),
 };

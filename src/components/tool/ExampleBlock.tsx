@@ -8,11 +8,11 @@ import { TryExample } from "./TryExample";
 /** Worked examples are computed from the real engine at build time, so the page can never show a stale or wrong answer. */
 export async function ExampleBlock({ tool }: { tool: ToolDefinition }) {
   const engine = await loadEngine(tool.engineModule, tool.id);
-  const blocks = tool.examples.map((ex) => {
+  const blocks = await Promise.all(tool.examples.map(async (ex) => {
     const raw = { ...defaultValues(tool.inputs), ...ex.inputs };
     const { errors, values } = validateInputs(tool.inputs, raw);
     if (Object.keys(errors).length) throw new Error(`Example "${ex.title}" of ${tool.id} is invalid: ${JSON.stringify(errors)}`);
-    const res = engine(values, makeContext({ today: ex.today ?? "2026-01-01", nowMs: Date.UTC(2026, 0, 1, 12), timeZone: "UTC" }));
+    const res = await engine(values, makeContext({ today: ex.today ?? "2026-01-01", nowMs: Date.UTC(2026, 0, 1, 12), timeZone: "UTC" }));
     if (!res.ok) throw new Error(`Example "${ex.title}" of ${tool.id} failed: ${res.errors.map((e) => e.message).join("; ")}`);
     const rows = tool.inputs
       .filter((i) => isVisible(i, raw) && (raw[i.id] ?? "").trim() !== "")
@@ -25,7 +25,7 @@ export async function ExampleBlock({ tool }: { tool: ToolDefinition }) {
         return { label: i.label, shown };
       });
     return { ex, rows, out: res.output };
-  });
+  }));
   return (
     <div>
       {blocks.map(({ ex, rows, out }) => (

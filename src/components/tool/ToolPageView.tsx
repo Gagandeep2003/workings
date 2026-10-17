@@ -7,9 +7,10 @@ import { RichText } from "./RichText";
 import { Placement, AffiliatePlacement } from "../monetization/Placements";
 import { TrackView } from "../Analytics";
 import { Icon } from "../Icon";
+import { ToolIcon } from "../ToolIcon";
 import { CATEGORY_BY_ID } from "@/tools/categories";
 import type { ToolDefinition } from "@/tools/types";
-import { breadcrumbJsonLd, jsonLdString, type Crumb } from "@/lib/seo";
+import { jsonLdString, toolJsonLd, type Crumb } from "@/lib/seo";
 import { formatDateShort, parseISODate } from "@/lib/dates";
 import { toolPath } from "@/tools/registry";
 
@@ -19,11 +20,14 @@ export function ToolPageView({ tool }: { tool: ToolDefinition }) {
   const rev = tool.regulatory ? parseISODate(tool.regulatory.reviewedOn) : null;
   return (
     <div className="container" data-cat={tool.category}>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(breadcrumbJsonLd(crumbs)) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(toolJsonLd(tool, crumbs)) }} />
       <TrackView event="tool_view" props={{ toolId: tool.id, category: tool.category }} />
       <Breadcrumbs crumbs={crumbs} />
-      <header className="page-head">
-        <h1>{tool.h1}</h1>
+      <header className="page-head page-head--tool">
+        <div className="page-head__title">
+          <span className="cat-icon cat-icon--lg" aria-hidden="true"><ToolIcon name={tool.icon} /></span>
+          <h1>{tool.h1}</h1>
+        </div>
         <p className="page-head__intro">{tool.intro}</p>
         {tool.regulatory && (
           <p className="badge badge--warn">
@@ -44,14 +48,14 @@ export function ToolPageView({ tool }: { tool: ToolDefinition }) {
             <FormulaBlock formula={tool.formula} />
           </section>
 
-          <section aria-labelledby="how-title" className="copy">
-            <h2 id="how-title">How it works</h2>
-            {tool.howItWorks.map((p, i) => <p key={i}><RichText text={p} /></p>)}
-          </section>
-
           <section aria-labelledby="example-title">
             <h2 id="example-title">{tool.examples.length > 1 ? "Worked examples" : "Worked example"}</h2>
             <ExampleBlock tool={tool} />
+          </section>
+
+          <section aria-labelledby="how-title" className="copy">
+            <h2 id="how-title">How it works</h2>
+            {tool.howItWorks.map((p, i) => <p key={i}><RichText text={p} /></p>)}
           </section>
 
           <Placement placement="in-content" tool={tool} />
@@ -76,6 +80,11 @@ export function ToolPageView({ tool }: { tool: ToolDefinition }) {
           <section aria-labelledby="related-title">
             <h2 id="related-title">Related tools</h2>
             <RelatedTools tool={tool} />
+            <p className="directory-links">
+              <Link href={`/${cat.id}`}>All {cat.name.toLowerCase()} tools</Link>
+              <span aria-hidden="true">·</span>
+              <Link href="/tools">Browse the full tool directory</Link>
+            </p>
           </section>
         </div>
 

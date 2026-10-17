@@ -14,3 +14,7 @@ python3 qa/alltools.py     # opens every tool page, runs its first worked exampl
 
 `mon.py` expects a build made with the monetization variables enabled (see docs/MONETIZATION.md) on port 3200.
 `overflow.py` and the others read `BASE` at the top of the file — change it to test a preview URL.
+
+* `redesign.py` — theme toggle (cycle, persistence, system-vs-explicit precedence, invalid stored value), global search finds and opens **every** tool by name, no horizontal overflow on every new page at 320/375/768 px, screenshots.
+* `markdown_safety.py` — pastes hostile Markdown into the previewer and fails if anything executes, becomes an element, or causes a request to another host.
+

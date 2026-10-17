@@ -12,6 +12,8 @@ export const SITE = {
   /** Set CONTACT_EMAIL in the environment. Until then the contact page says so instead of inventing an address. */
   contactEmail: process.env.CONTACT_EMAIL?.trim() || "",
   operatorName: process.env.SITE_OPERATOR_NAME?.trim() || "",
+  /** "organization" or "person". Structured data about the publisher is only emitted when both name and type are configured. */
+  operatorType: (process.env.SITE_OPERATOR_TYPE?.trim().toLowerCase() === "person" ? "person" : process.env.SITE_OPERATOR_TYPE?.trim().toLowerCase() === "organization" ? "organization" : "") as "" | "person" | "organization",
   /** Real date the legal pages were last revised. Update only when their text genuinely changes. */
   legalUpdated: "2026-10-03",
   locale: "en",
@@ -20,6 +22,7 @@ export const SITE = {
 export const absoluteUrl = (path: string): string => `${SITE.url}${path === "/" ? "" : path}`;
 
 export const STATIC_PAGES = [
+  { path: "/tools", title: "All tools", description: "Every calculator, converter and developer tool on Workings, grouped by category." },
   { path: "/about", title: "About", description: "What this site is for, how its calculations are produced and what to expect." },
   { path: "/contact", title: "Contact", description: "How to reach the site owner with corrections, questions or partnership enquiries." },
   { path: "/advertise", title: "Advertise", description: "Sponsorship and advertising opportunities on Workings: labelled placements, tool sponsorships and partnerships, kept away from the calculators." },

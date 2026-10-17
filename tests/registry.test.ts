@@ -14,9 +14,9 @@ describe("tool registry", () => {
     expect(validateRegistry()).toEqual([]);
   });
 
-  it("ships a library of 60–90 tools across all seven categories", () => {
-    expect(TOOLS.length).toBeGreaterThanOrEqual(60);
-    expect(TOOLS.length).toBeLessThanOrEqual(90);
+  it("ships a library of 100–200 tools across all seven categories", () => {
+    expect(TOOLS.length).toBeGreaterThanOrEqual(100);
+    expect(TOOLS.length).toBeLessThanOrEqual(200);
     expect(new Set(TOOLS.map((t) => t.category)).size).toBe(7);
   });
 
@@ -42,7 +42,7 @@ describe.each(TOOLS.map((t) => [t.id, t] as const))("%s", (_id, tool) => {
       const raw = { ...defaultValues(tool.inputs), ...ex.inputs };
       const { errors, values } = validateInputs(tool.inputs, raw);
       expect(errors, `${ex.title} validation`).toEqual({});
-      const res = engine(values, makeContext({ today: ex.today ?? "2026-01-01", nowMs: Date.UTC(2026, 0, 1, 12), timeZone: "UTC" }));
+      const res = await engine(values, makeContext({ today: ex.today ?? "2026-01-01", nowMs: Date.UTC(2026, 0, 1, 12), timeZone: "UTC" }));
       if (!res.ok) throw new Error(`${ex.title}: ${res.errors.map((e) => e.message).join("; ")}`);
       expect(labelMatches(res.output.primary.label, tool.output.primary), `label "${res.output.primary.label}" not in ${JSON.stringify(tool.output.primary)}`).toBe(true);
       expect(formatValue(res.output.primary.value).length).toBeGreaterThan(0);

@@ -1,8 +1,10 @@
 /* Design tokens. One brand accent (cobalt), warm paper neutrals, semantic colours for state.
+   Themes: light is the default; dark applies via the visitor's choice (data-theme="dark") or, when they have not chosen,
+   via the operating-system setting. The dark declarations below are intentionally listed twice (explicit and system).
    Breakpoints (CSS variables can't be used in media queries, so these are the values used throughout):
    sm 480px · md 640px · lg 900px · xl 1100px · 2xl 1400px */
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
 
   /* neutrals */
   --bg: #f6f5f1;
@@ -76,6 +78,8 @@
   --sh-2: 0 4px 14px rgba(22, 23, 26, 0.08), 0 1px 3px rgba(22, 23, 26, 0.06);
   --sh-3: 0 14px 38px rgba(22, 23, 26, 0.16), 0 3px 10px rgba(22, 23, 26, 0.08);
   --focus-ring: 0 0 0 3px var(--bg), 0 0 0 5px var(--accent);
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --hero-glow: radial-gradient(60rem 22rem at 50% -8rem, color-mix(in srgb, var(--accent) 11%, transparent), transparent 70%);
 
   /* layout */
   --container: 1120px;
@@ -85,7 +89,7 @@
   --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='%2362666f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
 
   /* category identities: same lightness/chroma, different hue */
-  --cat-math-bg: #e8eeff;      --cat-math-fg: #2447d6;
+  --cat-math-bg: #f9e7f7;      --cat-math-fg: #9a2593;
   --cat-everyday-bg: #dff3f0;  --cat-everyday-fg: #0b6b63;
   --cat-student-bg: #fdeed6;   --cat-student-fg: #8a4b00;
   --cat-career-bg: #f1e8fa;    --cat-career-fg: #6b35a8;
@@ -94,8 +98,8 @@
   --cat-exams-bg: #fbe5ea;     --cat-exams-fg: #a3213f;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
+:root[data-theme="dark"] {
+  color-scheme: dark;
     --bg: #0e0f11;
     --surface: #16181b;
     --surface-2: #1b1d21;
@@ -132,13 +136,63 @@
     --sh-3: 0 14px 38px rgba(0, 0, 0, 0.6);
     --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='%239a9da6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
 
-    --cat-math-bg: #1b2447;      --cat-math-fg: #9db0ff;
+    --cat-math-bg: #3a1636;      --cat-math-fg: #f0a8ea;
     --cat-everyday-bg: #10302d;  --cat-everyday-fg: #6fd6cb;
     --cat-student-bg: #3a2810;   --cat-student-fg: #f0b867;
     --cat-career-bg: #2c1e40;    --cat-career-fg: #c9a2f2;
     --cat-money-bg: #14301b;     --cat-money-fg: #7bd68e;
     --cat-developer-bg: #23262d; --cat-developer-fg: #b4bccb;
     --cat-exams-bg: #3b1620;     --cat-exams-fg: #f59db0;
+  
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+      --bg: #0e0f11;
+      --surface: #16181b;
+      --surface-2: #1b1d21;
+      --surface-sunken: #111214;
+      --border: #2a2d33;
+      --border-strong: #3c4048;
+      --text: #ededef;
+      --text-2: #b9bbc2;
+      --text-3: #9a9da6;
+
+      --accent: #8ca2ff;
+      --accent-hover: #a5b6ff;
+      --accent-active: #bccaff;
+      --accent-soft: #1b2447;
+      --accent-border: #34437f;
+      --accent-text: #9db0ff;
+      --on-accent: #0b1030;
+
+      --success: #5fd39b;
+      --success-soft: #12281e;
+      --success-border: #1f5a3f;
+      --warning: #f2c265;
+      --warning-soft: #2b2210;
+      --warning-border: #6b5217;
+      --danger: #ff8d85;
+      --danger-soft: #2e1614;
+      --danger-border: #7a3430;
+      --info: #9db0ff;
+      --info-soft: #1b2447;
+      --info-border: #34437f;
+
+      --sh-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+      --sh-2: 0 4px 14px rgba(0, 0, 0, 0.45);
+      --sh-3: 0 14px 38px rgba(0, 0, 0, 0.6);
+      --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='%239a9da6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
+
+      --cat-math-bg: #3a1636;      --cat-math-fg: #f0a8ea;
+      --cat-everyday-bg: #10302d;  --cat-everyday-fg: #6fd6cb;
+      --cat-student-bg: #3a2810;   --cat-student-fg: #f0b867;
+      --cat-career-bg: #2c1e40;    --cat-career-fg: #c9a2f2;
+      --cat-money-bg: #14301b;     --cat-money-fg: #7bd68e;
+      --cat-developer-bg: #23262d; --cat-developer-fg: #b4bccb;
+      --cat-exams-bg: #3b1620;     --cat-exams-fg: #f59db0;
+  
   }
 }
 

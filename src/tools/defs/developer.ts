@@ -4,6 +4,7 @@ import { dateField, numberField, opts, selectField, textField, textareaField, ti
 const dev = group({ category: "developer", engineModule: "developer/json", tags: ["developer", "browser-only"], shareable: false, commercialIntent: "medium", adProfile: "minimal", affiliateProfile: { categories: ["developer-tools"], maxItems: 1 } }, [
   {
     id: "json-formatter",
+    icon: "braces",
     title: "JSON Formatter",
     h1: "JSON Formatter and Beautifier",
     shortDescription: "Pretty-print JSON with 2 or 4 spaces or tabs and optional key sorting — numbers are never altered.",
@@ -29,10 +30,11 @@ const dev = group({ category: "developer", engineModule: "developer/json", tags:
     examples: [{ title: "A small object", inputs: { json: '{"name":"Ada","skills":["math","code"],"score":1.0}', indent: "2", sort: "no" } }],
     assumptions: ["Input is limited to 5 MB.", "Comments and trailing commas are not valid JSON and are reported as errors."],
     faqs: [{ q: "Is my JSON uploaded anywhere?", a: "No. It is processed in your browser tab and discarded when you close or refresh the page." }],
-    relatedTools: ["json-validator", "json-minifier", "base64-encode-decode", "url-encode-decode", "jwt-decoder", "html-formatter"],
+    relatedTools: ["json-validator", "json-minifier", "base64-encode-decode", "url-encode-decode", "jwt-decoder", "html-formatter", "text-diff-checker"],
   },
   {
     id: "json-validator",
+    icon: "badge-check",
     title: "JSON Validator",
     h1: "JSON Validator",
     shortDescription: "Check whether JSON is valid, with the exact line and column of any error and structure statistics.",
@@ -56,6 +58,7 @@ const dev = group({ category: "developer", engineModule: "developer/json", tags:
   },
   {
     id: "json-minifier",
+    icon: "brackets",
     title: "JSON Minifier",
     h1: "JSON Minifier",
     shortDescription: "Remove all unnecessary whitespace from JSON and see how many bytes you saved.",
@@ -82,6 +85,7 @@ const dev = group({ category: "developer", engineModule: "developer/json", tags:
 const enc = group({ category: "developer", engineModule: "developer/encode", tags: ["developer", "browser-only"], shareable: false, commercialIntent: "medium", adProfile: "minimal", affiliateProfile: { categories: ["developer-tools"], maxItems: 1 } }, [
   {
     id: "base64-encode-decode",
+    icon: "binary",
     title: "Base64 Encode and Decode",
     h1: "Base64 Encoder and Decoder",
     shortDescription: "Encode text to Base64 or decode Base64 to text, with URL-safe output and full Unicode support.",
@@ -105,10 +109,11 @@ const enc = group({ category: "developer", engineModule: "developer/encode", tag
     ],
     examples: [{ title: "Encode a greeting", inputs: { mode: "encode", variant: "std", text: "Hello, world!" } }],
     assumptions: ["Input is limited to 2 million characters."],
-    relatedTools: ["url-encode-decode", "jwt-decoder", "json-formatter", "uuid-generator", "qr-code-generator"],
+    relatedTools: ["url-encode-decode", "jwt-decoder", "json-formatter", "uuid-generator", "qr-code-generator", "hash-generator"],
   },
   {
     id: "url-encode-decode",
+    icon: "link",
     title: "URL Encode and Decode",
     h1: "URL Encoder and Decoder",
     shortDescription: "Percent-encode or decode URLs and query values — as a component, a full URL or form data.",
@@ -132,10 +137,11 @@ const enc = group({ category: "developer", engineModule: "developer/encode", tag
     ],
     examples: [{ title: "Encode a query value", inputs: { mode: "component", plus: "no", text: "name=Ada Lovelace & co/é" } }],
     assumptions: ["Follows the browser's encodeURIComponent / encodeURI rules."],
-    relatedTools: ["base64-encode-decode", "json-formatter", "qr-code-generator", "regex-tester", "jwt-decoder"],
+    relatedTools: ["base64-encode-decode", "json-formatter", "qr-code-generator", "regex-tester", "jwt-decoder", "url-parser", "html-entity-encoder-decoder"],
   },
   {
     id: "uuid-generator",
+    icon: "fingerprint",
     title: "UUID Generator",
     h1: "UUID Generator (v4 and v7)",
     shortDescription: "Generate random UUID v4 or time-ordered UUID v7 values in bulk, in your browser.",
@@ -164,6 +170,7 @@ const enc = group({ category: "developer", engineModule: "developer/encode", tag
   },
   {
     id: "jwt-decoder",
+    icon: "key-round",
     title: "JWT Decoder",
     h1: "JWT Decoder (Decode Only — Never Uploaded)",
     shortDescription: "Read a JWT's header and payload locally. The signature is not verified.",
@@ -186,10 +193,11 @@ const enc = group({ category: "developer", engineModule: "developer/encode", tag
     examples: [{ title: "A sample HS256 token", inputs: { token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkphbmUiLCJpYXQiOjE1MTYyMzkwMjJ9.c2lnbmF0dXJl" } }],
     assumptions: ["Signatures are not verified. The 'expired' note relies on your device clock."],
     faqs: [{ q: "Is it safe to paste a real token?", a: "The token is processed locally and never uploaded. Still, treat live tokens as passwords — prefer expired or test tokens when you can." }],
-    relatedTools: ["base64-encode-decode", "json-formatter", "unix-timestamp-converter", "uuid-generator", "url-encode-decode"],
+    relatedTools: ["base64-encode-decode", "json-formatter", "unix-timestamp-converter", "uuid-generator", "url-encode-decode", "hash-generator"],
   },
   {
     id: "unix-timestamp-converter",
+    icon: "clock",
     title: "Unix Timestamp Converter",
     h1: "Unix Timestamp Converter",
     shortDescription: "Convert Unix timestamps (seconds or milliseconds) to dates and dates to timestamps, in UTC or local time.",
@@ -205,7 +213,7 @@ const enc = group({ category: "developer", engineModule: "developer/encode", tag
       selectField({ id: "unit", label: "Unit", showIf: { field: "mode", equals: "to-date" }, options: opts(["auto", "Auto-detect (seconds or milliseconds)"], ["s", "Seconds"], ["ms", "Milliseconds"]) }),
       dateField({ id: "date", label: "Date", showIf: { field: "mode", equals: "to-timestamp" } }),
       timeField({ id: "time", label: "Time (24-hour)", default: "00:00", required: false, showIf: { field: "mode", equals: "to-timestamp" } }),
-      numberField({ id: "seconds", label: "Seconds (optional)", integer: true, required: false, min: 0, max: 59, showIf: { field: "mode", equals: "to-timestamp" } }),
+      numberField({ id: "seconds", label: "Seconds", integer: true, required: false, min: 0, max: 59, showIf: { field: "mode", equals: "to-timestamp" } }),
       selectField({ id: "zone", label: "Time zone", options: opts(["utc", "UTC"], ["local", "My device's time zone"]) }),
     ],
     submitLabel: "Convert",
@@ -217,13 +225,14 @@ const enc = group({ category: "developer", engineModule: "developer/encode", tag
     ],
     examples: [{ title: "1,700,000,000 seconds", inputs: { mode: "to-date", timestamp: "1700000000", unit: "auto", zone: "utc" } }],
     assumptions: ["“Current” values come from your device clock."],
-    relatedTools: ["timezone-converter", "date-add-subtract-calculator", "jwt-decoder", "uuid-generator", "days-between-dates-calculator"],
+    relatedTools: ["timezone-converter", "date-add-subtract-calculator", "jwt-decoder", "uuid-generator", "days-between-dates-calculator", "cron-expression-explainer"],
   },
 ]);
 
 const web = group({ category: "developer", engineModule: "developer/web", tags: ["developer", "browser-only"], shareable: false, commercialIntent: "medium", adProfile: "minimal", affiliateProfile: { categories: ["developer-tools"], maxItems: 1 } }, [
   {
     id: "html-formatter",
+    icon: "code",
     title: "HTML Formatter",
     h1: "HTML Formatter and Beautifier",
     shortDescription: "Indent and tidy HTML without changing its tags, attributes or text.",
@@ -246,10 +255,11 @@ const web = group({ category: "developer", engineModule: "developer/web", tags: 
     ],
     examples: [{ title: "Minified snippet", inputs: { html: "<div><p>Hello <b>world</b>!</p><ul><li>One<li>Two</ul></div>", indent: "2" } }],
     assumptions: ["Collapses runs of spaces in normal text to one space, as browsers render them.", "Input limited to 1 MB."],
-    relatedTools: ["css-formatter", "json-formatter", "color-converter", "url-encode-decode", "word-counter"],
+    relatedTools: ["css-formatter", "json-formatter", "color-converter", "url-encode-decode", "word-counter", "html-entity-encoder-decoder", "markdown-previewer"],
   },
   {
     id: "css-formatter",
+    icon: "palette",
     title: "CSS Formatter",
     h1: "CSS Formatter and Minifier",
     shortDescription: "Format CSS with consistent indentation, or minify it, with errors that give the line number.",
@@ -273,10 +283,11 @@ const web = group({ category: "developer", engineModule: "developer/web", tags: 
     ],
     examples: [{ title: "Compact rules", inputs: { css: "a,b{color:red;margin:0 auto}@media (max-width:600px){.x{display:none}}", mode: "format", indent: "2" } }],
     assumptions: ["Plain CSS and common nesting; preprocessor syntax (Sass, Less) isn't supported."],
-    relatedTools: ["html-formatter", "color-converter", "json-minifier", "json-formatter", "regex-tester"],
+    relatedTools: ["html-formatter", "color-converter", "json-minifier", "json-formatter", "regex-tester", "contrast-checker"],
   },
   {
     id: "color-converter",
+    icon: "pipette",
     title: "Color Converter",
     h1: "Color Converter (HEX, RGB, HSL)",
     shortDescription: "Convert colours between HEX, RGB, HSL and HSV, with WCAG contrast ratios against white and black.",
@@ -296,14 +307,15 @@ const web = group({ category: "developer", engineModule: "developer/web", tags: 
     ],
     examples: [{ title: "A blue", inputs: { color: "#3b82f6" } }],
     assumptions: ["sRGB colours only. HEX, RGB and HSL are rounded to whole numbers for display."],
-    relatedTools: ["css-formatter", "html-formatter", "qr-code-generator", "base64-encode-decode", "case-converter"],
+    relatedTools: ["css-formatter", "html-formatter", "qr-code-generator", "base64-encode-decode", "case-converter", "contrast-checker"],
   },
   {
     id: "qr-code-generator",
+    icon: "qr-code",
     engineModule: "developer/qr",
     title: "QR Code Generator",
     h1: "QR Code Generator",
-    shortDescription: "Make a QR code for a link or text, downloadable as SVG or PNG — created in your browser.",
+    shortDescription: "Make a QR code for a link or text, downloadable as SVG or PNG, in your browser.",
     seoTitle: "QR Code Generator – Free, No Sign-Up, Local",
     seoDescription: "Create a QR code for a link or text with your choice of error correction. Download as SVG or PNG. Generated in your browser — your text is never uploaded.",
     keywords: ["qr code generator", "qr code", "make qr code", "qr generator", "url to qr code", "text to qr"],
@@ -330,6 +342,7 @@ const web = group({ category: "developer", engineModule: "developer/web", tags: 
 const text = group({ category: "developer", engineModule: "developer/text", tags: ["text", "browser-only"], shareable: false, commercialIntent: "low", adProfile: "minimal" }, [
   {
     id: "word-counter",
+    icon: "type",
     title: "Word Counter",
     h1: "Word Counter and Character Counter",
     shortDescription: "Count words, characters, sentences and paragraphs, with reading time and the most-used words.",
@@ -349,10 +362,11 @@ const text = group({ category: "developer", engineModule: "developer/text", tags
     ],
     examples: [{ title: "A short passage", inputs: { text: "Hello world! This is a test.\n\nSecond paragraph here." } }],
     assumptions: ["Counts can differ slightly from other tools because word boundaries are a matter of convention."],
-    relatedTools: ["case-converter", "regex-tester", "html-formatter", "json-formatter", "url-encode-decode"],
+    relatedTools: ["case-converter", "regex-tester", "html-formatter", "json-formatter", "url-encode-decode", "markdown-previewer"],
   },
   {
     id: "case-converter",
+    icon: "case-sensitive",
     title: "Case Converter",
     h1: "Case Converter (camelCase, snake_case, Title Case…)",
     shortDescription: "Convert text to UPPER, lower, Title, Sentence, camel, Pascal, snake, kebab and CONSTANT case.",
@@ -372,13 +386,14 @@ const text = group({ category: "developer", engineModule: "developer/text", tags
     ],
     examples: [{ title: "Mixed identifier", inputs: { text: "helloWorld_foo-bar" } }],
     assumptions: ["English-style Title Case (no small-word exceptions)."],
-    relatedTools: ["word-counter", "url-encode-decode", "base64-encode-decode", "regex-tester", "json-formatter"],
+    relatedTools: ["word-counter", "url-encode-decode", "base64-encode-decode", "regex-tester", "json-formatter", "slug-generator"],
   },
 ]);
 
 const regexTools = group({ category: "developer", engineModule: "developer/regex", tags: ["regex", "browser-only"], shareable: false, commercialIntent: "medium", adProfile: "minimal", affiliateProfile: { categories: ["developer-tools"], maxItems: 1 } }, [
   {
     id: "regex-tester",
+    icon: "regex",
     title: "Regex Tester",
     h1: "Regex Tester (JavaScript)",
     shortDescription: "Test a regular expression against text with highlighted matches, capture groups and a replace preview.",
@@ -392,7 +407,7 @@ const regexTools = group({ category: "developer", engineModule: "developer/regex
       textField({ id: "pattern", label: "Pattern", placeholder: "(\\d+)-(\\d+)", monospace: true, maxLength: 2000, hint: "Without the surrounding slashes" }),
       textField({ id: "flags", label: "Flags", default: "g", required: false, monospace: true, maxLength: 8, hint: "g global, i ignore case, m multiline, s dot-all, u unicode, y sticky, d indices" }),
       textareaField({ id: "text", label: "Test text", rows: 6, monospace: true, maxLength: 100_000, placeholder: "a 10-20 b 3-4", required: false }),
-      textField({ id: "replacement", label: "Replacement (optional)", required: false, monospace: true, maxLength: 500, hint: "Use $1, $2 or $<name> to insert groups" }),
+      textField({ id: "replacement", label: "Replacement", required: false, monospace: true, maxLength: 500, hint: "Use $1, $2 or $<name> to insert groups" }),
     ],
     submitLabel: "Test",
     output: { primary: ["Matches"] },
@@ -403,7 +418,7 @@ const regexTools = group({ category: "developer", engineModule: "developer/regex
     ],
     examples: [{ title: "Two numbers around a dash", inputs: { pattern: "(\\d+)-(\\d+)", flags: "g", text: "a 10-20 b 3-4", replacement: "" } }],
     assumptions: ["JavaScript (ECMAScript) syntax only.", "No timeout is applied, so extremely complex patterns can make the page unresponsive until you reload it."],
-    relatedTools: ["json-validator", "word-counter", "case-converter", "url-encode-decode", "html-formatter"],
+    relatedTools: ["json-validator", "word-counter", "case-converter", "url-encode-decode", "html-formatter", "text-diff-checker"],
   },
 ]);
 

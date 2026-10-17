@@ -4,6 +4,7 @@ import { Icon } from "../Icon";
 import { CopyButton } from "./CopyButton";
 import { formatValue, type Value } from "@/lib/format";
 import type { ResultTable, TableCell, ToolOutput } from "@/tools/types";
+import { MarkdownView } from "./MarkdownView";
 
 const isNumeric = (c: TableCell) => typeof c === "number" || (typeof c === "object" && ["number", "money", "percent"].includes(c.kind));
 const cellText = (c: TableCell): string => (typeof c === "object" ? formatValue(c as Value) : String(c));
@@ -132,6 +133,7 @@ export function ResultView({ output, copyText, stale, shareable, onShare, onCopi
         </dl>
       )}
       {output.highlight && <div className="result__section"><h3>Matches in your text</h3><Highlighted text={output.highlight.text} ranges={output.highlight.ranges} /></div>}
+      {output.markdown && <div className="result__section"><h3>Preview</h3><MarkdownView blocks={output.markdown} /></div>}
       {output.texts?.map((t) => (
         <div className="result__section" key={t.label}>
           <div className="textblock">

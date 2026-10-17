@@ -5,6 +5,7 @@ import { SITE } from "@/lib/site";
 import { MainNav, type NavItem } from "./MainNav";
 import { HeaderControls } from "./HeaderControls";
 import { SearchBox } from "../SearchBox";
+import { ThemeToggle } from "./ThemeToggle";
 
 const ITEMS: NavItem[] = CATEGORIES.map((c) => ({ href: `/${c.id}`, label: c.name, icon: c.icon }));
 
@@ -21,6 +22,7 @@ export function Header() {
         <div className="site-header__search">
           <SearchBox variant="header" placeholder="Search tools…" />
         </div>
+        <ThemeToggle />
         <HeaderControls items={ITEMS} />
       </div>
     </header>

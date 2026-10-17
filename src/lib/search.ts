@@ -124,6 +124,7 @@ export function search(entries: SearchEntry[], query: string, limit = 8): Search
       }
       if (titleHits === required.length) score += 8;
     }
+    if (p.titleStr === norm) score += 40; // typing a tool's exact name must open that tool, not a longer title that merely contains it
     if (norm.length >= 3) {
       if (p.titleStr.includes(norm)) score += 20;
       if (p.titleStr.startsWith(norm)) score += 6;

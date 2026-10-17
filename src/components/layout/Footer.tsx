@@ -17,11 +17,14 @@ export function Footer({ showAd = true }: { showAd?: boolean }) {
           <div className="footer-grid">
             <div className="footer-about">
               <Link href="/" className="brand"><BrandMark /><span>{SITE.name}</span></Link>
-              <p>Calculators, converters and developer tools that show the formula behind every answer. Free to use, no account needed, and your inputs stay in your browser.</p>
+              <p>Free calculators, converters and developer tools that show their working. No account, and your inputs stay in your browser.</p>
             </div>
             <nav aria-labelledby="footer-categories">
-              <h2 id="footer-categories">Categories</h2>
-              <ul>{CATEGORIES.map((c) => <li key={c.id}><Link href={`/${c.id}`}>{c.name}</Link></li>)}</ul>
+              <h2 id="footer-categories">Tools</h2>
+              <ul>
+                {CATEGORIES.map((c) => <li key={c.id}><Link href={`/${c.id}`}>{c.name}</Link></li>)}
+                <li><Link href="/tools"><strong>All tools (directory)</strong></Link></li>
+              </ul>
             </nav>
             <nav aria-labelledby="footer-site">
               <h2 id="footer-site">Site</h2>

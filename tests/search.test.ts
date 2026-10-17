@@ -74,3 +74,21 @@ describe("tool search", () => {
     expect(editDistance("ab", "ba")).toBe(1);
   });
 });
+
+describe("exact names open the right tool", () => {
+  const entries = TOOLS.map((t) => ({ i: t.id, t: t.title, c: t.category, p: toolPath(t), d: t.shortDescription, a: t.aliases, k: t.keywords, h: t.phrases ?? [] }));
+  it("typing any tool's exact title ranks that tool first (a title contained in a longer title must not win)", () => {
+    const wrong: string[] = [];
+    for (const t of TOOLS) {
+      for (const q of [t.title, t.title.toLowerCase(), t.title.toUpperCase()]) {
+        const top = search(entries, q, 3)[0];
+        if (top?.i !== t.id) wrong.push(`"${q}" → ${top?.t}`);
+      }
+    }
+    expect(wrong).toEqual([]);
+  });
+  it("Percentage Calculator is not outranked by Marks Percentage Calculator", () => {
+    expect(search(entries, "Percentage Calculator", 3)[0].i).toBe("percentage-calculator");
+    expect(search(entries, "age calculator", 3)[0].i).toBe("age-calculator");
+  });
+});

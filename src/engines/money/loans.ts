@@ -31,10 +31,10 @@ export function buildSchedule(principalMinor: number, annualPct: number, months:
   return rows;
 }
 
-const tenureMonths = (v: Parameters<typeof num>[0], idValue = "tenure", idUnit = "tenureUnit") =>
+export const tenureMonths = (v: Parameters<typeof num>[0], idValue = "tenure", idUnit = "tenureUnit") =>
   num(v, idValue) * (str(v, idUnit) === "years" ? 12 : 1);
 
-function checkTenure(months: number): string | null {
+export function checkTenure(months: number): string | null {
   if (!Number.isInteger(months)) return "Tenure must work out to a whole number of months (for example 2.5 years = 30 months).";
   if (months < 1) return "Tenure must be at least 1 month.";
   if (months > 600) return "Tenure can't be more than 50 years (600 months).";

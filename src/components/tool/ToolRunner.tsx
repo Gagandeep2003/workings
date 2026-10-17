@@ -38,6 +38,28 @@ function readHash(tool: ToolRuntime): Record<string, string> | null {
   return Object.keys(found).length ? found : null;
 }
 
+const storageKey = (tool: ToolRuntime) => `workings:tool:${tool.id}`;
+
+/** Values a visitor typed earlier on this device (only for tools with `persist`). Anything unexpected is ignored. */
+function readSaved(tool: ToolRuntime): Record<string, string> | null {
+  try {
+    const raw = window.localStorage.getItem(storageKey(tool));
+    if (!raw) return null;
+    const data: unknown = JSON.parse(raw);
+    if (!data || typeof data !== "object" || Array.isArray(data)) return null;
+    const found: Record<string, string> = {};
+    for (const input of tool.inputs) {
+      const text = (data as Record<string, unknown>)[input.id];
+      if (typeof text !== "string" || text.length > 20000) continue;
+      if (input.type === "select" && !input.options.some((o) => o.value === text)) continue;
+      found[input.id] = text;
+    }
+    return Object.keys(found).length ? found : null;
+  } catch {
+    return null;
+  }
+}
+
 export function ToolRunner({ tool }: { tool: ToolRuntime }) {
   const uid = useId().replace(/:/g, "");
   const initial = useRef(defaultValues(tool.inputs));
@@ -87,7 +109,7 @@ export function ToolRunner({ tool }: { tool: ToolRuntime }) {
     setErrors({});
     try {
       const engine = await getEngine();
-      const res = engine(v.values, makeContext());
+      const res = await engine(v.values, makeContext());
       if (res.ok) {
         setOutput(res.output);
         setGeneral([]);
@@ -129,11 +151,18 @@ export function ToolRunner({ tool }: { tool: ToolRuntime }) {
     return () => window.clearTimeout(t);
   }, [values, tool.mode, run]);
 
+  // keep the visitor's entries on this device for tools that opt in (never uploaded)
+  useEffect(() => {
+    if (!tool.persist || !dirty.current) return;
+    try { window.localStorage.setItem(storageKey(tool), JSON.stringify(values)); } catch { /* storage blocked or full: carry on without saving */ }
+  }, [values, tool]);
+
   // restore a shared link, and listen for "Try this example"
   useEffect(() => {
     const fromHash = readHash(tool);
-    if (fromHash) {
-      const next = normalizeSelects(tool.inputs, { ...initial.current, ...fromHash });
+    const restored = fromHash ?? (tool.persist ? readSaved(tool) : null);
+    if (restored) {
+      const next = normalizeSelects(tool.inputs, { ...initial.current, ...restored });
       setValues(next);
       dirty.current = true;
       void run(next, { explicit: false, revealAll: true });
@@ -184,6 +213,7 @@ export function ToolRunner({ tool }: { tool: ToolRuntime }) {
     setShareNote("");
     dirty.current = false;
     calcs.current = 0;
+    if (tool.persist) { try { window.localStorage.removeItem(storageKey(tool)); } catch { /* ignore */ } }
     if (window.location.hash) history.replaceState(null, "", window.location.pathname + window.location.search);
     const first = tool.inputs.find((i) => isVisible(i, fresh));
     if (first) focusField(first.id);

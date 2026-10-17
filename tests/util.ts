@@ -7,6 +7,14 @@ export const ctx = makeContext({ today: "2026-01-01", nowMs: Date.UTC(2026, 0, 1
 export function run(engines: EngineMap, id: string, values: Values, c = ctx): ToolResult {
   const engine = engines[id];
   if (!engine) throw new Error(`No engine for ${id}`);
+  const res = engine(values, c);
+  if (res instanceof Promise) throw new Error(`Engine ${id} is async — use runAsync()`);
+  return res;
+}
+
+export async function runAsync(engines: EngineMap, id: string, values: Values, c = ctx): Promise<ToolResult> {
+  const engine = engines[id];
+  if (!engine) throw new Error(`No engine for ${id}`);
   return engine(values, c);
 }
 

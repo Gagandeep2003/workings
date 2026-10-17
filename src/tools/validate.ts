@@ -31,6 +31,7 @@ export function validateTool(t: ToolDefinition, all: Map<string, ToolDefinition>
   need(t.title.trim().length >= 3, "title missing");
   need(t.h1.trim().length >= 3, "h1 missing");
   need(t.shortDescription.length >= 30 && t.shortDescription.length <= 140, `shortDescription should be 30–140 chars (is ${t.shortDescription.length})`);
+  { const words = t.shortDescription.trim().split(/\s+/).length; need(words >= 8 && words <= 18, `shortDescription should be 8–18 words so it fits a card (is ${words})`); }
   need(t.seoTitle.length >= 20 && t.seoTitle.length + SITE_NAME_SUFFIX_LENGTH <= 68, `seoTitle should be 20–${68 - SITE_NAME_SUFFIX_LENGTH} chars (is ${t.seoTitle.length})`);
   need(t.seoDescription.length >= 100 && t.seoDescription.length <= 165, `seoDescription should be 100–165 chars (is ${t.seoDescription.length})`);
   need(t.keywords.length >= 3, "needs at least 3 keywords");
@@ -92,10 +93,10 @@ export function validateTool(t: ToolDefinition, all: Map<string, ToolDefinition>
   }
 
   // regulatory / exam rules
-  if (t.category === "exams") need(t.regulatory, "exam tools must store their rule's year, source and effective date (regulatory)");
+  if (t.category === "exams" && !t.ruleFree) need(t.regulatory, "exam tools must store their rule's year, source and effective date (regulatory)");
   if (t.regulatory) {
     const r = t.regulatory;
-    need(/^\d{4}-\d{2}-\d{2}$/.test(r.effectiveFrom), "regulatory.effectiveFrom must be YYYY-MM-DD");
+    need(/^\d{4}-\d{2}-\d{2}$/.test(r.effectiveFrom) || /^\d{4} cycle$/.test(r.effectiveFrom), "regulatory.effectiveFrom must be YYYY-MM-DD, or \"YYYY cycle\" when no exact date has been verified");
     need(/^\d{4}-\d{2}-\d{2}$/.test(r.reviewedOn), "regulatory.reviewedOn must be YYYY-MM-DD");
     need(r.sources.length >= 1 && r.sources.every((s) => /^https:\/\//.test(s.url)), "regulatory needs at least one https source");
     need(r.region.length > 0 && r.appliesTo.length > 0, "regulatory needs region and appliesTo");

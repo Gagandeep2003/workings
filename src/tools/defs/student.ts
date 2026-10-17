@@ -4,6 +4,7 @@ import { numberField, opts, percentField, selectField, textareaField } from "../
 const student = group({ category: "student", engineModule: "student/marks", tags: ["student", "exam"], disclaimer: "education" }, [
   {
     id: "marks-percentage-calculator",
+    icon: "clipboard-check",
     title: "Marks Percentage Calculator",
     h1: "Marks Percentage Calculator",
     shortDescription: "Percentage from marks obtained, marks from a percentage, or an overall percentage across subjects.",
@@ -29,10 +30,11 @@ const student = group({ category: "student", engineModule: "student/marks", tags
     ],
     examples: [{ title: "450 out of 500", inputs: { mode: "percentage", obtained: "450", total: "500" } }, { title: "Three subjects", inputs: { mode: "subjects", subjects: "78/100\n85/100\n92/100" } }],
     assumptions: ["Percentages are rounded to two decimal places for display; institutions may round differently.", "Marks can have decimals."],
-    relatedTools: ["percentage-calculator", "cgpa-to-percentage-calculator", "required-marks-calculator", "weighted-marks-calculator", "exam-score-calculator", "attendance-percentage-calculator"],
+    relatedTools: ["percentage-calculator", "cgpa-to-percentage-calculator", "required-marks-calculator", "weighted-marks-calculator", "exam-score-calculator", "attendance-percentage-calculator", "mock-test-tracker"],
   },
   {
     id: "attendance-percentage-calculator",
+    icon: "user-check",
     title: "Attendance Percentage Calculator",
     h1: "Attendance Percentage Calculator",
     shortDescription: "Attendance percentage from classes attended and held, checked against a required minimum.",
@@ -60,9 +62,10 @@ const student = group({ category: "student", engineModule: "student/marks", tags
   },
   {
     id: "required-attendance-calculator",
+    icon: "list-checks",
     title: "Required Attendance Calculator",
     h1: "Required Attendance Calculator",
-    shortDescription: "How many classes to attend in a row to reach your target — or how many you can still miss.",
+    shortDescription: "Classes you must attend to reach your target attendance, or how many you can still miss.",
     seoTitle: "Required Attendance Calculator – Classes to Attend",
     seoDescription: "Find how many consecutive classes you must attend to reach 75% (or any target) attendance, or how many you can still afford to miss.",
     keywords: ["required attendance", "classes to attend", "bunk calculator", "how many classes can i miss", "75 percent attendance"],
@@ -73,7 +76,7 @@ const student = group({ category: "student", engineModule: "student/marks", tags
       percentField({ id: "target", label: "Required attendance", default: "75", min: 1, max: 100 }),
       numberField({ id: "held", label: "Classes held so far", integer: true, min: 1 }),
       numberField({ id: "attended", label: "Classes attended so far", integer: true, min: 0 }),
-      numberField({ id: "left", label: "Classes left this term (optional)", integer: true, min: 0, required: false, hint: "Used to check whether the target is still reachable" }),
+      numberField({ id: "left", label: "Classes left this term", integer: true, min: 0, required: false, hint: "Used to check whether the target is still reachable" }),
     ],
     output: { primary: ["Classes to attend in a row", "Classes you can still miss"] },
     formula: { expression: ["Below target: x ≥ (target × held − 100 × attended) ÷ (100 − target)", "Above target: can miss ⌊attended × 100 ÷ target − held⌋"], where: ["x — consecutive classes to attend, rounded up"], plain: "Solve (attended + x) ÷ (held + x) ≥ target for x, using whole classes." },
@@ -88,6 +91,7 @@ const student = group({ category: "student", engineModule: "student/marks", tags
   },
   {
     id: "exam-score-calculator",
+    icon: "file-check",
     title: "Exam Score Calculator",
     h1: "Exam Score Calculator (with Negative Marking)",
     shortDescription: "Net score from correct and wrong answers using your own marks per question and penalty.",
@@ -112,10 +116,11 @@ const student = group({ category: "student", engineModule: "student/marks", tags
     ],
     examples: [{ title: "60 right, 20 wrong, +1 / −0.25", inputs: { total: "100", correct: "60", wrong: "20", plus: "1", minus: "0.25" } }],
     assumptions: ["The same scheme applies to every question.", "No sectional cut-offs or normalisation are modelled."],
-    relatedTools: ["ssc-cgl-tier-1-score-calculator", "ssc-chsl-tier-1-score-calculator", "marks-percentage-calculator", "required-marks-calculator", "percentage-calculator"],
+    relatedTools: ["ssc-cgl-tier-1-score-calculator", "ssc-chsl-tier-1-score-calculator", "marks-percentage-calculator", "required-marks-calculator", "percentage-calculator", "target-score-planner", "mock-test-tracker"],
   },
   {
     id: "required-marks-calculator",
+    icon: "target",
     title: "Required Marks Calculator",
     h1: "Required Marks Calculator (What Do I Need on the Final?)",
     shortDescription: "The score you need on the remaining coursework or exam to reach a target overall grade.",
@@ -129,7 +134,7 @@ const student = group({ category: "student", engineModule: "student/marks", tags
       percentField({ id: "target", label: "Target overall grade", min: 0, max: 100 }),
       percentField({ id: "current", label: "Your grade so far", min: 0, max: 100, hint: "Average on the work that has been graded" }),
       percentField({ id: "done", label: "Share of the grade already decided", min: 0, max: 100, hint: "For example 60 if coursework worth 60% is graded" }),
-      numberField({ id: "max", label: "Maximum marks of the remaining work (optional)", required: false, min: 1, hint: "To see the result in marks as well as percent" }),
+      numberField({ id: "max", label: "Maximum marks of the remaining work", required: false, min: 1, hint: "To see the result in marks as well as percent" }),
     ],
     output: { primary: ["Score needed on the remaining work"] },
     formula: { expression: ["needed % = (target − current × done ÷ 100) ÷ (100 − done) × 100"], where: ["current — your average on the graded work, in percent", "done — the percentage of the final grade already decided"], plain: "Subtract the points you've already banked from your target, and spread the rest over the work still to come." },
@@ -139,10 +144,11 @@ const student = group({ category: "student", engineModule: "student/marks", tags
     ],
     examples: [{ title: "75% on 60% of the grade, target 80%", inputs: { target: "80", current: "75", done: "60", max: "" } }],
     assumptions: ["All remaining work is combined into one score; extra-credit rules aren't modelled."],
-    relatedTools: ["weighted-marks-calculator", "marks-percentage-calculator", "exam-score-calculator", "gpa-calculator", "cgpa-calculator"],
+    relatedTools: ["weighted-marks-calculator", "marks-percentage-calculator", "exam-score-calculator", "gpa-calculator", "cgpa-calculator", "target-score-planner", "mock-test-tracker"],
   },
   {
     id: "weighted-marks-calculator",
+    icon: "scale",
     title: "Weighted Marks and Grade Calculator",
     h1: "Weighted Marks and Course Grade Calculator",
     shortDescription: "Overall course percentage and letter grade from scores with different weights.",
@@ -168,6 +174,7 @@ const student = group({ category: "student", engineModule: "student/marks", tags
 const grades = group({ category: "student", engineModule: "student/grades", tags: ["gpa", "cgpa", "grades"], disclaimer: "education" }, [
   {
     id: "cgpa-calculator",
+    icon: "graduation-cap",
     title: "CGPA Calculator",
     h1: "CGPA Calculator",
     shortDescription: "Cumulative GPA from semester grades, optionally weighted by each semester's credits.",
@@ -180,7 +187,7 @@ const grades = group({ category: "student", engineModule: "student/grades", tags
     inputs: [
       selectField({ id: "scale", label: "Grading scale", options: opts(["10", "10-point scale"], ["4", "4-point scale"]) }),
       textareaField({ id: "sgpas", label: "Semester grades (SGPA)", placeholder: "8.2, 7.9, 8.5, 9.0", hint: "One per semester, separated by commas, spaces or new lines", rows: 3, maxLength: 2000 }),
-      textareaField({ id: "credits", label: "Credits per semester (optional)", required: false, placeholder: "20, 22, 24, 18", hint: "Same number of values, same order as above", rows: 2, maxLength: 2000 }),
+      textareaField({ id: "credits", label: "Credits per semester", required: false, placeholder: "20, 22, 24, 18", hint: "Same number of values, same order as above", rows: 2, maxLength: 2000 }),
     ],
     output: { primary: ["CGPA"] },
     formula: { expression: ["simple: CGPA = (SGPA₁ + SGPA₂ + … + SGPAₙ) ÷ n", "credit-weighted: CGPA = Σ(SGPAᵢ × creditsᵢ) ÷ Σ(creditsᵢ)"], where: ["SGPA — semester grade point average"], plain: "Average the semester grades, giving each semester more weight if it had more credits." },
@@ -194,6 +201,7 @@ const grades = group({ category: "student", engineModule: "student/grades", tags
   },
   {
     id: "cgpa-to-percentage-calculator",
+    icon: "arrow-right-left",
     reviewal: "periodic",
     title: "CGPA to Percentage Calculator",
     h1: "CGPA to Percentage Calculator",
@@ -208,7 +216,7 @@ const grades = group({ category: "student", engineModule: "student/grades", tags
       numberField({ id: "cgpa", label: "CGPA (10-point scale)", min: 0, max: 10 }),
       selectField({ id: "method", label: "Conversion method", wide: true, options: opts(["cbse", "CBSE: percentage = CGPA × 9.5"], ["x10", "Simple: percentage = CGPA × 10"], ["custom", "My university's formula: (CGPA − offset) × multiplier"]) }),
       numberField({ id: "multiplier", label: "Multiplier", showIf: { field: "method", equals: "custom" }, hint: "From your university's rule, for example 10", min: 0.0001 }),
-      numberField({ id: "offset", label: "Offset (optional)", required: false, allowNegative: true, showIf: { field: "method", equals: "custom" }, hint: "Subtracted from the CGPA first; leave empty if none" }),
+      numberField({ id: "offset", label: "Offset", required: false, allowNegative: true, showIf: { field: "method", equals: "custom" }, hint: "Subtracted from the CGPA first; leave empty if none" }),
     ],
     output: { primary: ["Percentage"] },
     formula: { expression: ["CBSE: percentage = CGPA × 9.5", "Simple: percentage = CGPA × 10", "Custom: percentage = (CGPA − offset) × multiplier"], where: ["The multiplier and offset come from your institution's published rule."], plain: "Multiply the CGPA by the factor your institution specifies." },
@@ -224,6 +232,7 @@ const grades = group({ category: "student", engineModule: "student/grades", tags
   },
   {
     id: "percentage-to-cgpa-calculator",
+    icon: "arrow-left-right",
     title: "Percentage to CGPA Calculator",
     h1: "Percentage to CGPA Calculator",
     shortDescription: "Convert a percentage to a 10-point CGPA by reversing the conversion rule you choose.",
@@ -237,7 +246,7 @@ const grades = group({ category: "student", engineModule: "student/grades", tags
       percentField({ id: "percentage", label: "Percentage", min: 0, max: 100 }),
       selectField({ id: "method", label: "Conversion method", wide: true, options: opts(["cbse", "CBSE: CGPA = percentage ÷ 9.5"], ["x10", "Simple: CGPA = percentage ÷ 10"], ["custom", "My university's formula (reversed)"]) }),
       numberField({ id: "multiplier", label: "Multiplier", min: 0.0001, showIf: { field: "method", equals: "custom" }, hint: "The multiplier in your university's CGPA → percentage rule" }),
-      numberField({ id: "offset", label: "Offset (optional)", required: false, allowNegative: true, showIf: { field: "method", equals: "custom" }, hint: "The value subtracted from CGPA in that rule; leave empty if none" }),
+      numberField({ id: "offset", label: "Offset", required: false, allowNegative: true, showIf: { field: "method", equals: "custom" }, hint: "The value subtracted from CGPA in that rule; leave empty if none" }),
     ],
     output: { primary: ["CGPA (10-point scale)"] },
     formula: { expression: ["CBSE: CGPA = percentage ÷ 9.5", "Simple: CGPA = percentage ÷ 10", "Custom: CGPA = percentage ÷ multiplier + offset"], where: ["Uses the same multiplier and offset as the CGPA → percentage rule."], plain: "Undo the multiplication used to turn CGPA into a percentage." },
@@ -253,6 +262,7 @@ const grades = group({ category: "student", engineModule: "student/grades", tags
   },
   {
     id: "gpa-calculator",
+    icon: "award",
     title: "GPA Calculator",
     h1: "GPA Calculator (4.0 Scale, Semester or Cumulative)",
     shortDescription: "Semester GPA from letter grades and credits on the US 4.0 scale, with cumulative GPA.",
@@ -265,8 +275,8 @@ const grades = group({ category: "student", engineModule: "student/grades", tags
     inputs: [
       selectField({ id: "aplus", label: "Value of an A+", options: opts(["4", "A+ = 4.0 (most schools)"], ["4.3", "A+ = 4.3"]) }),
       textareaField({ id: "courses", label: "Grade and credits for each course", placeholder: "A, 3\nB+, 4\nA-, 3", hint: "One course per line. Letters A+ to F, or grade points like 3.7.", rows: 5, maxLength: 20000 }),
-      numberField({ id: "priorGpa", label: "Previous cumulative GPA (optional)", required: false, min: 0, max: 4.3 }),
-      numberField({ id: "priorCredits", label: "Previous total credits (optional)", required: false, min: 0 }),
+      numberField({ id: "priorGpa", label: "Previous cumulative GPA", required: false, min: 0, max: 4.3 }),
+      numberField({ id: "priorCredits", label: "Previous total credits", required: false, min: 0 }),
     ],
     output: { primary: ["GPA"] },
     formula: { expression: ["GPA = Σ(grade points × credits) ÷ Σ(credits)", "cumulative = (previous GPA × previous credits + term quality points) ÷ (previous credits + term credits)"], where: ["Quality points = grade points × credits"], plain: "Multiply each grade's points by the course credits, add up, and divide by total credits." },
@@ -281,6 +291,7 @@ const grades = group({ category: "student", engineModule: "student/grades", tags
   },
   {
     id: "sgpa-calculator",
+    icon: "book-open",
     title: "SGPA Calculator",
     h1: "SGPA Calculator (10-Point Scale)",
     shortDescription: "Semester grade point average from grades and credits on a 10-point scale.",
