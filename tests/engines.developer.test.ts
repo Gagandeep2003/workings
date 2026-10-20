@@ -5,7 +5,8 @@ import { engines as enc, uuidV4, uuidV7 } from "@/engines/developer/encode";
 import { engines as web } from "@/engines/developer/web";
 import { engines as txt } from "@/engines/developer/text";
 import { engines as rx } from "@/engines/developer/regex";
-import { engines as qr, makeMatrix } from "@/engines/developer/qr";
+import { makeMatrix } from "@/lib/files/qrmatrix";
+import { wifiPayload, upiPayload, vcardPayload, smsPayload, emailPayload } from "@/lib/files/qr";
 import { decodeBase64, encodeBase64 } from "@/lib/base64";
 import { formatHtml } from "@/lib/html-format";
 import { formatCss, minifyCss } from "@/lib/css-format";
@@ -280,11 +281,17 @@ describe("QR code generator", () => {
       expect(decode(makeMatrix(txt, level)), `${txt.slice(0, 10)} ${level}`).toBe(txt);
     }
   });
-  it("validates input", () => {
-    const r = run(qr, "qr-code-generator", { text: "https://example.com", level: "M" });
-    expect(out(r).qr!.matrix.length).toBe(25);
-    expect(errs(run(qr, "qr-code-generator", { text: " ", level: "M" }))).toMatch(/Enter the text/);
-    expect(errs(run(qr, "qr-code-generator", { text: "x".repeat(3000), level: "H" }))).toMatch(/too much data/);
-    expect(out(run(qr, "qr-code-generator", { text: "example.com/page", level: "M" })).notes?.join(" ")).toMatch(/without http/);
+  it("round-trips every payload type through a real decoder", () => {
+    const payloads = [
+      wifiPayload({ ssid: "Cafe;Net", password: 'p:a,s"s\\w', security: "WPA", hidden: true }),
+      upiPayload({ vpa: "shop@okbank", name: "Ravi Store", amount: "150.50", note: "Order #12" }),
+      vcardPayload({ first: "Ada", last: "Lovelace", org: "Analytical, Co", title: "", phone: "+91 98765 43210", email: "ada@example.com", url: "", street: "", city: "London", country: "UK" }),
+      smsPayload("+91 98765 43210", "Hello there"),
+      emailPayload("a@b.co", "Hi there", "x & y"),
+    ];
+    for (const p of payloads) expect(decode(makeMatrix(p, "M")), p.slice(0, 20)).toBe(p);
+  });
+  it("rejects data that does not fit", () => {
+    expect(() => makeMatrix("x".repeat(3000), "H")).toThrow();
   });
 });

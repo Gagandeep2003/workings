@@ -8,6 +8,8 @@ import { examTools } from "./defs/exams";
 import { mathMoreTools } from "./defs/math-more";
 import { lifeMoreTools } from "./defs/life-more";
 import { developerMoreTools } from "./defs/developer-more";
+import { developerExtraTools } from "./defs/developer-extra";
+import { imagePdfTools } from "./defs/image-pdf";
 import { CATEGORIES } from "./categories";
 import { HOME } from "./home";
 import type { CategoryId, ToolDefinition, ToolRuntime } from "./types";
@@ -20,7 +22,8 @@ export const TOOLS: ToolDefinition[] = [
   ...studentTools,
   ...careerTools, ...lifeMoreTools.career,
   ...moneyTools, ...lifeMoreTools.money,
-  ...developerTools, ...developerMoreTools,
+  ...developerTools, ...developerMoreTools, ...developerExtraTools,
+  ...imagePdfTools,
   ...examTools,
 ];
 

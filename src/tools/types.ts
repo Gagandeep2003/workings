@@ -2,8 +2,8 @@ import type { Value } from "@/lib/format";
 import type { ToolIconName } from "@/components/icon-data";
 import type { Block as MarkdownBlock } from "@/lib/markdown";
 
-export type CategoryId = "math" | "everyday" | "student" | "career" | "money" | "developer" | "exams";
-export const CATEGORY_IDS: CategoryId[] = ["math", "everyday", "student", "career", "money", "developer", "exams"];
+export type CategoryId = "math" | "everyday" | "student" | "career" | "money" | "developer" | "exams" | "image-pdf";
+export const CATEGORY_IDS: CategoryId[] = ["math", "everyday", "student", "career", "money", "developer", "exams", "image-pdf"];
 
 // ---- Inputs ------------------------------------------------------------------------------------
 export type ShowIf = { field: string; equals: string | string[] };
@@ -112,6 +112,15 @@ export type RegulatoryInfo = {
   note?: string;
 };
 
+/** Interface components for tools that work on files or need a custom UI. Mapped to lazy-loaded components in ClientToolHost. */
+export type ClientComponent =
+  | "image-compressor" | "image-converter" | "image-resizer" | "photo-resizer" | "jpg-to-pdf"
+  | "pdf-merge" | "pdf-split" | "pdf-compress" | "qr-generator";
+export type ClientToolConfig = { component: ClientComponent; /** Which variant of a shared component this page shows (e.g. photo vs signature, or the QR type). */ preset?: string };
+/** A concrete scenario with the result a visitor should expect. Written by hand (client tools have no calculation engine to compute it). */
+export type PracticalExample = { title: string; scenario: string; result: string };
+export type Spec = { label: string; value: string };
+
 export type Disclaimer = "finance" | "tax" | "salary" | "exam" | "education" | "estimate" | "security";
 export type CommercialIntent = "low" | "medium" | "high";
 export type AdProfile = "none" | "minimal" | "standard";
@@ -123,7 +132,7 @@ export type EngineModule =
   | "student/marks" | "student/grades"
   | "career/salary" | "career/time" | "career/ctc"
   | "money/loans" | "money/growth" | "money/tax"
-  | "developer/json" | "developer/encode" | "developer/web" | "developer/text" | "developer/regex" | "developer/qr"
+  | "developer/json" | "developer/encode" | "developer/web" | "developer/text" | "developer/regex"
   | "exams/ssc"
   | "math/algebra"
   | "math/geometry"
@@ -143,7 +152,12 @@ export type EngineModule =
   | "exams/management"
   | "exams/percentile"
   | "exams/government"
-  | "exams/planner";
+  | "exams/planner"
+  | "developer/lines"
+  | "developer/data"
+  | "developer/random"
+  /** Browser-only tools (images, PDFs, QR codes) have no calculation engine: their interface is a client component. */
+  | "client";
 
 export type ToolDefinition = {
   id: string;
@@ -162,6 +176,12 @@ export type ToolDefinition = {
   phrases?: string[];
   tags: string[];
   engineModule: EngineModule;
+  /** Set for browser-only tools (files, QR codes). Such tools have `inputs: []` and no engine. */
+  client?: ClientToolConfig;
+  /** Client tools: supported formats and hard limits, shown as a table. */
+  specs?: Spec[];
+  /** Client tools: realistic scenarios with expected results (shown instead of engine-computed worked examples). */
+  practicalExamples?: PracticalExample[];
   inputs: InputDef[];
   /** Which labels the engine returns — validated by tests against the real engine output. */
   output: { primary: string[]; secondary?: string[] };
@@ -216,6 +236,10 @@ export type ToolRuntime = {
 export type CategoryDef = {
   id: CategoryId;
   name: string;
+  /** How the name reads inside a sentence ("All image & PDF tools"). Defaults to the lower-cased name. */
+  inline?: string;
+  /** Page headline, when "<name> calculators and tools" does not fit the category. */
+  h1?: string;
   icon: string;
   tagline: string;
   seoTitle: string;

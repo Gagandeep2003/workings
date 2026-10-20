@@ -10,6 +10,8 @@ import type { MonetizationConfig } from "@/config/monetization";
 export const EVENT_NAMES = [
   "tool_view", "tool_calculation", "tool_result_copy", "tool_result_share", "tool_search", "category_view",
   "affiliate_click", "affiliate_impression", "ad_impression", "sponsor_click", "sponsor_impression",
+  // file tools: only that a tool was used, never file names, sizes or contents
+  "file_tool_files_added", "file_tool_download",
 ] as const;
 export type EventName = (typeof EVENT_NAMES)[number];
 

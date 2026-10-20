@@ -10,8 +10,8 @@ import { Icon, type IconName } from "@/components/Icon";
 import { ToolIcon } from "@/components/ToolIcon";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Workings — Free Online Calculators and Converters",
-  description: "Free online calculators, converters and exam score tools — percentage, EMI, SIP, age, CGPA, JEE, NEET and more. No sign-up, and the formula is shown.",
+  title: "Workings — Free Online Calculators, Image & PDF Tools",
+  description: "Free online calculators plus image and PDF tools: percentage, EMI, SIP, CGPA, compress images, merge PDFs and more. No sign-up; your files stay on your device.",
   path: "/",
   absoluteTitle: true,
 });
@@ -37,11 +37,11 @@ export default function Home() {
         <div className="container">
           <div className="hero__inner">
             <p className="hero__eyebrow">Free · No sign-up · Runs in your browser</p>
-            <h1 id="hero-title">Free online calculators for everyday questions.</h1>
-            <p className="hero__sub">Calculate faster with {roundedCount}+ free tools for maths, money, studies, career, dates, and development.</p>
+            <h1 id="hero-title">Free online calculators and file tools for everyday questions.</h1>
+            <p className="hero__sub">Calculate faster with {roundedCount}+ free tools for maths, money, studies, career, images and PDFs, and development.</p>
             <div className="hero__search">
               <label htmlFor="hero-search-input" className="sr-only">Search all {toolCount} tools</label>
-              <SearchBox variant="hero" inputId="hero-search-input" placeholder="Search tools — try “15% of 240”, “EMI”, “NEET marks” or “JSON”" />
+              <SearchBox variant="hero" inputId="hero-search-input" placeholder="Search tools — try “15% of 240”, “EMI”, “compress image” or “JSON”" />
             </div>
             <ul className="chips" aria-label="Popular searches">
               {HOME.searchChips.map((id) => { const t = need(id); return <li key={id}><Link className="chip" href={toolPath(t)}>{t.title.replace(/ (Calculator|Formatter)$/, "")}</Link></li>; })}

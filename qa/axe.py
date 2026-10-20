@@ -2,7 +2,7 @@ import json, sys
 from playwright.sync_api import sync_playwright
 BASE="http://localhost:3100"
 AXE=open("node_modules/axe-core/axe.min.js").read()
-PAGES=["/","/math","/math/percentage-calculator","/money/emi-calculator","/student/cgpa-calculator","/developer/json-formatter","/developer/color-converter","/everyday/unit-converter","/everyday/timezone-converter","/career/ctc-to-take-home-calculator","/exams/ssc-cgl-tier-1-score-calculator","/about","/privacy-policy","/contact","/search?q=loan","/everyday/working-days-calculator","/math/fraction-calculator","/developer/qr-code-generator","/developer/regex-tester"]
+PAGES=["/","/math","/math/percentage-calculator","/money/emi-calculator","/student/cgpa-calculator","/developer/json-formatter","/developer/color-converter","/everyday/unit-converter","/everyday/timezone-converter","/career/ctc-to-take-home-calculator","/exams/ssc-cgl-tier-1-score-calculator","/about","/privacy-policy","/contact","/search?q=loan","/everyday/working-days-calculator","/math/fraction-calculator","/developer/qr-code-generator","/developer/regex-tester","/image-pdf","/image-pdf/image-compressor","/image-pdf/passport-photo-resizer","/image-pdf/jpg-to-pdf","/image-pdf/merge-pdf","/image-pdf/split-pdf","/image-pdf/pdf-compressor","/image-pdf/wifi-qr-code-generator","/developer/remove-duplicate-lines","/developer/csv-to-json-converter","/developer/password-generator"]
 summary={}
 with sync_playwright() as p:
     b=p.chromium.launch()

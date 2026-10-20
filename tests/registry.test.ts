@@ -14,10 +14,20 @@ describe("tool registry", () => {
     expect(validateRegistry()).toEqual([]);
   });
 
-  it("ships a library of 100–200 tools across all seven categories", () => {
+  it("ships a library of 100–220 tools across all eight categories", () => {
     expect(TOOLS.length).toBeGreaterThanOrEqual(100);
-    expect(TOOLS.length).toBeLessThanOrEqual(200);
-    expect(new Set(TOOLS.map((t) => t.category)).size).toBe(7);
+    expect(TOOLS.length).toBeLessThanOrEqual(220);
+    expect(new Set(TOOLS.map((t) => t.category)).size).toBe(8);
+  });
+
+  it("file and QR tools are browser-only: no engine, no share links, no dynamic data", () => {
+    const clientTools = TOOLS.filter((t) => t.client);
+    expect(clientTools.length).toBeGreaterThanOrEqual(10);
+    for (const t of clientTools) {
+      expect(t.engineModule, t.id).toBe("client");
+      expect(t.shareable, t.id).toBe(false);
+      expect(t.requiresDynamicData, t.id).toBe(false);
+    }
   });
 
   it("no tool needs an external API in this release", () => {
@@ -25,7 +35,7 @@ describe("tool registry", () => {
   });
 
   it("developer tools never offer share links (inputs may be secrets)", () => {
-    for (const t of TOOLS.filter((x) => x.category === "developer")) expect(t.shareable, t.id).toBe(false);
+    for (const t of TOOLS.filter((x) => x.category === "developer" || x.category === "image-pdf")) expect(t.shareable, t.id).toBe(false);
   });
 
   it("serialisable runtime objects contain no functions", () => {
@@ -37,6 +47,7 @@ describe("tool registry", () => {
 
 describe.each(TOOLS.map((t) => [t.id, t] as const))("%s", (_id, tool) => {
   it("has an engine that returns a successful, correctly labelled result for every worked example", async () => {
+    if (tool.client) return; // browser-only tool: covered by the browser tests in qa/
     const engine = await loadEngine(tool.engineModule, tool.id);
     for (const ex of tool.examples) {
       const raw = { ...defaultValues(tool.inputs), ...ex.inputs };

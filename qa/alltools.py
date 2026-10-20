@@ -7,9 +7,12 @@ with sync_playwright() as p:
     b=p.chromium.launch(); ctx=b.new_context(viewport={"width":1280,"height":900}); pg=ctx.new_page()
     pg.on("console", lambda m: errs.append((pg.url,m.text[:120])) if m.type=="error" else None); pg.on("pageerror", lambda e: errs.append((pg.url,str(e)[:120])))
     for path in paths:
-        if path.count('/')!=2 or path.split('/')[1] not in ("math","everyday","student","career","money","developer","exams"): continue
+        if path.count('/')!=2 or path.split('/')[1] not in ("math","everyday","student","career","money","developer","exams","image-pdf"): continue
         pg.goto(BASE+path,wait_until="domcontentloaded")
         pg.wait_for_load_state("networkidle")
+        if pg.locator(".file-tool").count():  # file/QR tools have no worked example: check the tool interface loaded (see qa/file_tools.py for behaviour)
+            pg.wait_for_selector(".file-tool .dropzone, .file-tool .settings-grid",timeout=8000)
+            continue
         btn=pg.get_by_role("button",name="Try this example").first
         btn.click()
         try:

@@ -15,7 +15,9 @@ const UI: Record<string, string> = {
   reset: "rotate-ccw", swap: "arrow-left-right", download: "download", lock: "lock", bolt: "zap", formula: "sigma", sun: "sun", moon: "moon", monitor: "monitor",
   chevron: "chevron-down", external: "external-link", sparkles: "sparkles", list: "layout-list", shield: "shield-check",
   // category identities (used by the mobile menu, which is a client component)
-  math: "calculator", calendar: "calendar-days", graduation: "graduation-cap", briefcase: "briefcase", coins: "coins", code: "code", target: "target",
+  math: "calculator", calendar: "calendar-days", graduation: "graduation-cap", briefcase: "briefcase", coins: "coins", code: "code", target: "target", image: "image",
+  // file-tool UI (these tool UIs are client components)
+  upload: "upload", trash: "trash-2", "arrow-up": "arrow-up", "arrow-down": "arrow-down", "rotate-cw": "rotate-cw", file: "file-text", plus: "plus", "image-file": "file-image",
 };
 
 const TOOL: Record<string, string> = {
@@ -35,6 +37,12 @@ const TOOL: Record<string, string> = {
   "notebook-pen": "notebook-pen", pi: "pi", "badge-check": "badge-check", "square-sigma": "square-sigma", "chart-no-axes-column": "chart-no-axes-column", variable: "variable",
   utensils: "utensils", route: "route", "calendar-days": "calendar-days", "graduation": "graduation-cap", brackets: "brackets", "scroll-text": "scroll-text", gem: "gem",
   "file-pen": "file-pen", "square-radical": "square-radical", "percent-diamond": "percent-diamond", "bar-chart": "chart-bar", "list": "layout-list", "lightbulb": "lightbulb",
+  // image / PDF / text-tool additions
+  image: "image", images: "images", "file-image": "file-image", "image-down": "image-down", "image-minus": "image-minus", "file-output": "file-output", scissors: "scissors", merge: "merge",
+  "file-stack": "file-stack", "file-archive": "file-archive", "id-card": "id-card", signature: "signature", "pen-line": "pen-line", wifi: "wifi", smartphone: "smartphone",
+  "lock-keyhole": "lock-keyhole", "list-ordered": "list-ordered", "text-search": "text-search", eraser: "eraser", "file-spreadsheet": "file-spreadsheet", "file-json": "file-json",
+  "file-down": "file-down", "file-up": "file-up", files: "files", shrink: "shrink", crop: "crop", expand: "expand", replace: "replace", "arrow-down-a-z": "arrow-down-a-z",
+  "list-filter": "list-filter", "text-cursor-input": "text-cursor-input", "align-justify": "align-justify", pilcrow: "pilcrow", "scan-line": "scan-line",
 };
 
 type Node = [string, Record<string, string>];

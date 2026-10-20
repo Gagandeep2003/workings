@@ -7,7 +7,7 @@ const rawUrl =
 export const SITE = {
   name: "Workings",
   tagline: "Answers with the working shown",
-  description: "Free calculators, converters and developer tools that show the formula behind every result. No sign-up, no clutter.",
+  description: "Free calculators, image and PDF tools, converters and developer utilities. Formulas shown, files never uploaded, no sign-up, no clutter.",
   url: rawUrl.replace(/\/+$/, ""),
   /** Set CONTACT_EMAIL in the environment. Until then the contact page says so instead of inventing an address. */
   contactEmail: process.env.CONTACT_EMAIL?.trim() || "",

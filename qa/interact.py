@@ -91,7 +91,7 @@ with sync_playwright() as p:
     check("swap works", pg.input_value("[id$=-from]")=="MB" and pg.input_value("[id$=-to]")=="GiB")
     # 8 QR
     pg.goto(BASE+"/developer/qr-code-generator", wait_until="networkidle")
-    pg.locator("textarea").fill("https://example.com"); pg.wait_for_selector(".qr svg")
+    pg.locator("#qr-url").fill("https://example.com"); pg.wait_for_selector(".qr-out__img img")
     with pg.expect_download() as d: pg.get_by_role("button", name="SVG").click()
     check("QR svg download", d.value.suggested_filename=="qr-code.svg")
     # 9 date tool
@@ -101,7 +101,7 @@ with sync_playwright() as p:
     # 10 mobile nav
     m=b.new_context(viewport={"width":390,"height":844},is_mobile=True,has_touch=True); mp=m.new_page(); mp.goto(BASE+"/", wait_until="networkidle")
     mp.get_by_role("button", name="Browse categories").click()
-    check("mobile menu lists categories", mp.locator(".mobile-panel a").count()==7)
+    check("mobile menu lists categories", mp.locator(".mobile-panel a").count()==8)
     mp.locator(".mobile-panel a").first.click(); mp.wait_for_url("**/math")
     check("mobile menu closes on navigation", mp.locator(".mobile-panel").count()==0)
     mp.get_by_role("button", name="Search tools").click(); mp.keyboard.type("gst"); mp.wait_for_selector("[role=option]")

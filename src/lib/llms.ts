@@ -64,6 +64,11 @@ export function buildLlmsTxt(): string {
 }
 
 async function workedExample(t: ToolDefinition): Promise<string[]> {
+  if (t.client) {
+    const pe = t.practicalExamples?.[0];
+    if (!pe) return [];
+    return [`Practical example — ${pe.title}`, `  Inputs: ${flat(pe.scenario)}`, `  Result: ${flat(pe.result)}`];
+  }
   const ex = t.examples[0];
   if (!ex) return [];
   const engine = await loadEngine(t.engineModule, t.id);
@@ -104,6 +109,11 @@ export async function buildLlmsFullTxt(): Promise<string> {
       if (t.formula.plain) out.push(`  In words: ${flat(t.formula.plain)}`);
       out.push("");
       out.push(...(await workedExample(t)), "");
+      if (t.client && t.specs?.length) {
+        out.push("Supported formats and limits:");
+        for (const s of t.specs) out.push(`  - ${s.label}: ${flat(s.value)}`);
+        out.push("");
+      }
       out.push("Assumptions and limits:");
       for (const a of t.assumptions) out.push(`  - ${flat(a)}`);
       if (t.regulatory) {

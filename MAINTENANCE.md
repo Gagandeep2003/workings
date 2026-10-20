@@ -3,6 +3,21 @@
 The site is static: no server, database or queue to keep alive. What needs occasional attention is **content that depends on outside rules**, **dependencies**,
 and the **optional** revenue integrations. Everything below is a periodic review, not an on-call duty.
 
+## File tools: dependencies to watch
+
+The image, PDF and QR tools (`src/components/files`, `src/lib/files`) depend on a few packages. None adds a server cost, but they are worth a look a few times a year:
+
+| Package | Used for | Notes |
+| --- | --- | --- |
+| `@cantoo/pdf-lib` | Building, merging, splitting and re-writing PDFs; password handling | Maintained fork of `pdf-lib` (MIT). The original `pdf-lib` has had no release since 2022. |
+| `pdfjs-dist` | Drawing PDF pages (previews and "maximum" compression) | Apache-2.0. Loaded only on PDF pages; its worker file is about 1 MB. Always import from `pdfjs-dist/legacy/build/…` for wider browser support. |
+| `upng-js` (+ `pako`) | Lossy PNG (colour reduction) | MIT. Not updated since 2022 but small and stable; only loaded when a PNG is compressed. |
+| `qrcode-generator` | QR module matrix | MIT, tiny. |
+
+After upgrading any of them run `npm run build`, then `python3 qa/file_tools.py` (see `qa/README.md`) — it exercises every file tool in a real browser and verifies the downloaded files independently. The first-load JavaScript budget (`npm run validate:bundle`) should not change, because these libraries are loaded on demand.
+
+The photo and signature **presets** (`PRESETS` in `src/components/files/PhotoResizer.tsx`) are commonly published values, not rules. Exam bodies change them between notifications; review them when you notice a change, and never present them as mandatory.
+
 ## Tool classification
 
 **Evergreen — 108 tools.** Pure maths, unit definitions, calendar arithmetic, text/format utilities. They don't change unless there's a bug.

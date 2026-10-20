@@ -1,9 +1,9 @@
 # Workings
 
-Calculators, converters and developer tools that show the formula behind every answer — no sign-up, no database, no backend.
+Calculators, image and PDF tools, converters and developer utilities that show the formula behind every answer — no sign-up, no database, no backend. File tools run entirely in the browser.
 Built with Next.js (App Router) + TypeScript, statically generated, deployable to Vercel as-is.
 
-* **127 tools** in 7 categories (Math 36 · Everyday 17 · Student 11 · Career 9 · Money 14 · Developer 23 · Exams 17).
+* **146 tools** in 8 categories (Math 36 · Image & PDF 11 · Everyday 17 · Student 11 · Career 9 · Money 14 · Developer 31 · Exams 17). The Image & PDF tools (and the QR generator) are browser-only client tools — see [docs/FILE_TOOLS.md](docs/FILE_TOOLS.md).
 * Every result comes from a **deterministic, unit-tested TypeScript function**. No LLM, no API, no runtime lookups.
 * Worked examples on each page are **computed from the real engine at build time**, so they can't go stale.
 * Developer tools process everything **in the browser**; share links are disabled for them.

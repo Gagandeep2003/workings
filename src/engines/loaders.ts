@@ -28,7 +28,6 @@ export const engineModules: Record<EngineModule, Loader> = {
   "developer/web": () => import("./developer/web"),
   "developer/text": () => import("./developer/text"),
   "developer/regex": () => import("./developer/regex"),
-  "developer/qr": () => import("./developer/qr"),
   "exams/ssc": () => import("./exams/ssc"),
   "math/algebra": () => import("./math/algebra"),
   "math/geometry": () => import("./math/geometry"),
@@ -49,6 +48,11 @@ export const engineModules: Record<EngineModule, Loader> = {
   "exams/percentile": () => import("./exams/percentile"),
   "exams/government": () => import("./exams/government"),
   "exams/planner": () => import("./exams/planner"),
+  "developer/lines": () => import("./developer/lines"),
+  "developer/data": () => import("./developer/data"),
+  "developer/random": () => import("./developer/random"),
+  // Browser-only tools have no engine; the interface is a client component (see ClientToolHost).
+  client: async () => ({ engines: {} }),
 };
 
 export async function loadEngine(module: EngineModule, toolId: string): Promise<Engine> {

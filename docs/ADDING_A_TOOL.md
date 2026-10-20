@@ -23,6 +23,10 @@ A tool is **one metadata entry + one pure function**. No page file is copied.
    Compute expected values independently (a Python `decimal` script, a textbook example) — not by copying the function's output.
 5. Run `npm run verify`. The registry validator fails the build if any required field, route, link, example or label is wrong.
 
+## Browser-only tools (files, images, PDFs, QR codes)
+
+Tools that work on files or need a custom interface are *client tools*: they have no engine. Set `client: { component, preset? }` and `engineModule: "client"`, leave `inputs` and `examples` empty, and instead provide `specs` (formats and limits, at least 4), `practicalExamples` (at least 2 scenarios with expected results) and at least 4 FAQs. The page template shows these in place of the formula/worked-example blocks. The interface itself is a lazy-loaded component registered in `src/components/tool/ClientToolHost.tsx`. Client tools must set `shareable: false`. Full details and the testing recipe are in [FILE_TOOLS.md](FILE_TOOLS.md).
+
 ## Fields added in the October 2026 redesign
 
 * `icon` (required) — a Lucide icon name, shown on cards and the tool page. Names live in `src/components/icon-data.ts`, which is **generated**: add the name to `TOOL` in

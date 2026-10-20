@@ -147,7 +147,9 @@ describe("home page data", () => {
     expect(TOOL_BY_ID.get("percentage-calculator")!.addedOn).toBeUndefined(); // pre-existing tools have no known date and are never called "new"
     // a batch added on one day is interleaved across categories, not listed as one long run of Math tools
     const top = recentlyAdded(6).map((t) => t.category);
-    expect(new Set(top).size).toBe(6);
+    const topDate = recentlyAdded(1)[0].addedOn;
+    const categoriesInTopBatch = new Set(TOOLS.filter((t) => t.addedOn === topDate).map((t) => t.category)).size;
+    expect(new Set(top).size).toBe(Math.min(6, categoriesInTopBatch));
     expect(recentlyAdded(3).length).toBe(3);
   });
 });

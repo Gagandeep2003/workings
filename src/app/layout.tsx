@@ -5,6 +5,7 @@ import "@fontsource-variable/jetbrains-mono";
 import "../styles/tokens.css";
 import "../styles/base.css";
 import "../styles/components.css";
+import "../styles/files.css";
 import { SITE } from "@/lib/site";
 import { getMonetization, getPublicMonetization } from "@/config/monetization";
 import { Header } from "@/components/layout/Header";

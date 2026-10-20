@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Breadcrumbs } from "../Breadcrumbs";
 import { CalculatorShell } from "./CalculatorShell";
+import { ClientToolHost } from "./ClientToolHost";
 import { ExampleBlock } from "./ExampleBlock";
 import { DisclaimerBox, FaqList, FormulaBlock, RegulatoryBox, RelatedTools } from "./ContentBlocks";
 import { RichText } from "./RichText";
@@ -37,31 +38,84 @@ export function ToolPageView({ tool }: { tool: ToolDefinition }) {
         {!tool.regulatory && tool.category === "developer" && (
           <p className="badge"><Icon name="lock" /> Runs in your browser — nothing you enter is uploaded</p>
         )}
+        {tool.category === "image-pdf" && (
+          <p className="badge"><Icon name="lock" /> Your files never leave your device — nothing is uploaded</p>
+        )}
       </header>
 
-      <CalculatorShell tool={tool} />
+      {tool.client ? (
+        <section id="calculator" aria-labelledby="calculator-title">
+          <h2 id="calculator-title" className="sr-only">{tool.title}</h2>
+          <noscript><p className="card" style={{ padding: "var(--s-5)" }}>This tool runs in your browser and needs JavaScript. Everything below explains how it works and what it supports.</p></noscript>
+          <ClientToolHost component={tool.client.component} preset={tool.client.preset} />
+          <Placement placement="result-below" tool={tool} />
+          <AffiliatePlacement tool={tool} placement="result-below" />
+        </section>
+      ) : (
+        <CalculatorShell tool={tool} />
+      )}
 
       <div className="tool-layout" data-content="tool-body">
         <div className="content">
-          <section aria-labelledby="formula-title">
-            <h2 id="formula-title">Formula</h2>
-            <FormulaBlock formula={tool.formula} />
-          </section>
+          {tool.client ? (
+            <>
+              <section aria-labelledby="how-title" className="copy">
+                <h2 id="how-title">How to use it</h2>
+                {tool.howItWorks.map((p, i) => <p key={i}><RichText text={p} /></p>)}
+              </section>
 
-          <section aria-labelledby="example-title">
-            <h2 id="example-title">{tool.examples.length > 1 ? "Worked examples" : "Worked example"}</h2>
-            <ExampleBlock tool={tool} />
-          </section>
+              <section aria-labelledby="specs-title">
+                <h2 id="specs-title">Supported formats and limits</h2>
+                <div className="table-scroll" tabIndex={0} role="region" aria-label="Formats and limits table (scrollable)">
+                  <table className="spec-table">
+                    <tbody>{(tool.specs ?? []).map((s) => <tr key={s.label}><th scope="row">{s.label}</th><td><RichText text={s.value} /></td></tr>)}</tbody>
+                  </table>
+                </div>
+              </section>
 
-          <section aria-labelledby="how-title" className="copy">
-            <h2 id="how-title">How it works</h2>
-            {tool.howItWorks.map((p, i) => <p key={i}><RichText text={p} /></p>)}
-          </section>
+              <section aria-labelledby="example-title">
+                <h2 id="example-title">{(tool.practicalExamples?.length ?? 0) > 1 ? "Practical examples" : "Practical example"}</h2>
+                {(tool.practicalExamples ?? []).map((e) => (
+                  <div className="example" key={e.title}>
+                    <div className="example__head"><h3>{e.title}</h3></div>
+                    <div className="example__body">
+                      <dl>
+                        <div><dt>Situation</dt><dd><RichText text={e.scenario} /></dd></div>
+                        <div><dt>What to expect</dt><dd><RichText text={e.result} /></dd></div>
+                      </dl>
+                    </div>
+                  </div>
+                ))}
+              </section>
+
+              <section aria-labelledby="formula-title">
+                <h2 id="formula-title">The numbers behind it</h2>
+                <FormulaBlock formula={tool.formula} />
+              </section>
+            </>
+          ) : (
+            <>
+              <section aria-labelledby="formula-title">
+                <h2 id="formula-title">Formula</h2>
+                <FormulaBlock formula={tool.formula} />
+              </section>
+
+              <section aria-labelledby="example-title">
+                <h2 id="example-title">{tool.examples.length > 1 ? "Worked examples" : "Worked example"}</h2>
+                <ExampleBlock tool={tool} />
+              </section>
+
+              <section aria-labelledby="how-title" className="copy">
+                <h2 id="how-title">How it works</h2>
+                {tool.howItWorks.map((p, i) => <p key={i}><RichText text={p} /></p>)}
+              </section>
+            </>
+          )}
 
           <Placement placement="in-content" tool={tool} />
 
           <section aria-labelledby="assump-title" className="copy">
-            <h2 id="assump-title">Assumptions and limits</h2>
+            <h2 id="assump-title">{tool.client ? "Honest limits" : "Assumptions and limits"}</h2>
             <ul>{tool.assumptions.map((a) => <li key={a}>{a}</li>)}</ul>
           </section>
 
@@ -81,7 +135,7 @@ export function ToolPageView({ tool }: { tool: ToolDefinition }) {
             <h2 id="related-title">Related tools</h2>
             <RelatedTools tool={tool} />
             <p className="directory-links">
-              <Link href={`/${cat.id}`}>All {cat.name.toLowerCase()} tools</Link>
+              <Link href={`/${cat.id}`}>All {cat.inline ?? cat.name.toLowerCase()} tools</Link>
               <span aria-hidden="true">·</span>
               <Link href="/tools">Browse the full tool directory</Link>
             </p>
@@ -93,7 +147,7 @@ export function ToolPageView({ tool }: { tool: ToolDefinition }) {
             <div className="card aside-box">
               <h2>More in {cat.name}</h2>
               <RelatedTools tool={tool} layout="list" />
-              <p style={{ marginTop: "var(--s-3)" }}><Link href={`/${cat.id}`}>All {cat.name.toLowerCase()} tools <Icon name="arrow" style={{ width: "1em", height: "1em", verticalAlign: "-0.125em" }} /></Link></p>
+              <p style={{ marginTop: "var(--s-3)" }}><Link href={`/${cat.id}`}>All {cat.inline ?? cat.name.toLowerCase()} tools <Icon name="arrow" style={{ width: "1em", height: "1em", verticalAlign: "-0.125em" }} /></Link></p>
             </div>
             <AffiliatePlacement tool={tool} placement="sidebar" />
             <Placement placement="sidebar" tool={tool} />

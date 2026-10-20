@@ -76,7 +76,7 @@ export function websiteJsonLd() {
 /** schema.org applicationCategory values (free text, but these are the recognised ones). */
 const APP_CATEGORY: Record<CategoryId, string> = {
   math: "EducationalApplication", everyday: "UtilitiesApplication", student: "EducationalApplication", career: "BusinessApplication",
-  money: "FinanceApplication", developer: "DeveloperApplication", exams: "EducationalApplication",
+  money: "FinanceApplication", developer: "DeveloperApplication", exams: "EducationalApplication", "image-pdf": "MultimediaApplication",
 };
 
 /**
@@ -98,6 +98,7 @@ export function toolJsonLd(t: ToolDefinition, crumbs: Crumb[]) {
       operatingSystem: "Any",
       browserRequirements: "Requires JavaScript",
       isAccessibleForFree: true,
+      ...(t.client && t.specs ? { featureList: t.specs.map((s) => `${s.label}: ${s.value}`) } : {}),
       inLanguage: SITE.locale,
       isPartOf: { "@id": ID.website() },
       ...(publisher ? { publisher: { "@id": ID.publisher() } } : {}),

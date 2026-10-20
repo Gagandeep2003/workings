@@ -309,34 +309,6 @@ const web = group({ category: "developer", engineModule: "developer/web", tags: 
     assumptions: ["sRGB colours only. HEX, RGB and HSL are rounded to whole numbers for display."],
     relatedTools: ["css-formatter", "html-formatter", "qr-code-generator", "base64-encode-decode", "case-converter", "contrast-checker"],
   },
-  {
-    id: "qr-code-generator",
-    icon: "qr-code",
-    engineModule: "developer/qr",
-    title: "QR Code Generator",
-    h1: "QR Code Generator",
-    shortDescription: "Make a QR code for a link or text, downloadable as SVG or PNG, in your browser.",
-    seoTitle: "QR Code Generator – Free, No Sign-Up, Local",
-    seoDescription: "Create a QR code for a link or text with your choice of error correction. Download as SVG or PNG. Generated in your browser — your text is never uploaded.",
-    keywords: ["qr code generator", "qr code", "make qr code", "qr generator", "url to qr code", "text to qr"],
-    aliases: ["create qr code", "qr maker", "free qr code generator", "link to qr code", "qr code creator"],
-    phrases: ["make a qr code for a link", "generate qr code from text", "qr code svg download"],
-    intro: "Type or paste a link or any text, pick an error-correction level, and download the code.",
-    mode: "live",
-    inputs: [
-      textareaField({ id: "text", label: "Text or link", rows: 3, placeholder: "https://example.com", maxLength: 2000 }),
-      selectField({ id: "level", label: "Error correction", default: "M", options: opts(["L", "L — smallest code (7% recovery)"], ["M", "M — balanced (15%)"], ["Q", "Q — more robust (25%)"], ["H", "H — most robust (30%)"]) }),
-    ],
-    output: { primary: ["QR code"] },
-    formula: { expression: ["text → UTF-8 bytes → Reed–Solomon error-correction codewords → module matrix with a mask chosen by the QR standard"], where: ["Higher error-correction levels add redundancy, so the code is larger."], plain: "The code carries your data plus extra bits that let a scanner repair damaged squares." },
-    howItWorks: [
-      "The generator follows the QR Code (ISO/IEC 18004) standard: your text is stored as bytes, protected with Reed–Solomon error correction and arranged in a square grid whose size depends on the amount of data. Level L fits the most text; level H survives up to about 30% damage, which suits codes printed on rough surfaces or with a logo placed over them.",
-      "Everything runs in your browser, so the text is never uploaded, and the code is drawn as scalable vector shapes — download SVG for print or PNG for screens. Keep the blank margin around the code and use dark on light for the most reliable scanning. If you're encoding a URL with special characters, run it through the [[url-encode-decode]] first. Related: [[base64-encode-decode]] and [[color-converter]].",
-    ],
-    examples: [{ title: "A web address", inputs: { text: "https://example.com", level: "M" } }],
-    assumptions: ["Byte mode (UTF-8) is always used; up to 2,000 characters, fewer at high error-correction levels."],
-    relatedTools: ["url-encode-decode", "base64-encode-decode", "color-converter", "uuid-generator", "word-counter"],
-  },
 ]);
 
 const text = group({ category: "developer", engineModule: "developer/text", tags: ["text", "browser-only"], shareable: false, commercialIntent: "low", adProfile: "minimal" }, [

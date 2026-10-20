@@ -18,7 +18,7 @@ function scriptsFor(route: string): string[] {
   return [...new Set([...html.matchAll(/(?:src|href)="(\/_next\/static\/[^"]+\.js)"/g)].map((m) => m[1]))];
 }
 
-const routes = ["/", "/math", "/math/percentage-calculator", "/money/emi-calculator", "/developer/json-formatter", "/developer/qr-code-generator", "/everyday/unit-converter", "/about"];
+const routes = ["/", "/math", "/math/percentage-calculator", "/money/emi-calculator", "/developer/json-formatter", "/developer/qr-code-generator", "/image-pdf/image-compressor", "/image-pdf/merge-pdf", "/everyday/unit-converter", "/about"];
 console.log("Compressed JavaScript loaded on first visit (shared framework chunks included):\n");
 for (const route of routes) {
   const files = scriptsFor(route);

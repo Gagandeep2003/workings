@@ -23,6 +23,26 @@ export const CATEGORIES: CategoryDef[] = [
     ],
   },
   {
+    id: "image-pdf",
+    name: "Image & PDF",
+    inline: "image & PDF",
+    h1: "Image and PDF tools",
+    icon: "image",
+    tagline: "Compress, resize, convert and combine images and PDFs, without uploading them",
+    seoTitle: "Image & PDF Tools – Compress, Resize, Convert, Merge",
+    seoDescription: "Free image and PDF tools that run in your browser: image compressor, photo and signature resizer for forms, JPG to PDF, merge, split and compress PDF, plus QR codes.",
+    intro: [
+      "These tools work on your files, and they do it inside your browser: the pictures and PDFs you choose are processed on your own device and are never uploaded to a server, so passports, certificates, signatures and statements stay private. There is no account, no watermark and no daily limit imposed by this site; what you can process is limited only by your device's memory, and the limits are stated on every page.",
+      "Each tool says honestly what it can and cannot do. Image compression is lossy and not every file shrinks; a PDF made only of text may not get smaller; a password-protected or signed PDF changes when it is merged or split; and the photo-size presets for application forms are common starting points, not rules, because every exam and portal publishes its own numbers. Where a limit cannot be met, the tool tells you instead of handing over a file that will be rejected.",
+    ],
+    groups: [
+      { title: "Compress, resize and convert images", description: "Smaller files, exact dimensions, and the format you need.", toolIds: ["image-compressor", "image-resizer", "image-converter"] },
+      { title: "Photos and signatures for forms", description: "Exact pixels and KB limits for exam, job and government application forms.", toolIds: ["passport-photo-resizer", "signature-resizer"] },
+      { title: "PDF tools", description: "Turn pictures into a PDF, join files, pull pages out and shrink the result.", toolIds: ["jpg-to-pdf", "merge-pdf", "split-pdf", "pdf-compressor"] },
+      { title: "QR codes", description: "Codes for networks and payments; links, text and contacts are in the main QR generator.", toolIds: ["wifi-qr-code-generator", "upi-qr-code-generator"], alsoToolIds: ["qr-code-generator"] },
+    ],
+  },
+  {
     id: "everyday",
     name: "Everyday",
     icon: "calendar",
@@ -92,9 +112,9 @@ export const CATEGORIES: CategoryDef[] = [
     id: "developer",
     name: "Developer",
     icon: "code",
-    tagline: "JSON, hashes, URLs, JWTs, regex, cron and more — all local",
+    tagline: "JSON, text, CSV, hashes, URLs, JWTs, regex and more — all local",
     seoTitle: "Developer Tools — JSON, Base64, JWT, Regex, UUID",
-    seoDescription: "Browser-based developer tools: JSON formatter, Base64, hash generator, JWT decoder, regex tester, text diff, cron explainer, UUID, timestamps and QR codes.",
+    seoDescription: "Browser-based developer tools: JSON formatter, CSV and JSON converters, Base64, hash and password generators, JWT decoder, regex tester, text tools and QR codes.",
     intro: [
       "Everything on these pages runs in your browser. The JSON, tokens, text and code you paste are processed on your device and are never uploaded, stored or sent to analytics, so it is safe to paste real payloads while debugging. Share links are switched off for these tools for the same reason.",
       "Where behaviour differs between environments the page says so — the JSON tools follow the JSON specification strictly, the regex tester uses JavaScript's engine, and the JWT decoder only decodes: it never claims a token is valid.",
@@ -102,8 +122,10 @@ export const CATEGORIES: CategoryDef[] = [
     groups: [
       { title: "JSON", toolIds: ["json-formatter", "json-validator", "json-minifier"] },
       { title: "Encoding, hashing and tokens", toolIds: ["base64-encode-decode", "url-encode-decode", "html-entity-encoder-decoder", "hash-generator", "jwt-decoder", "uuid-generator", "unix-timestamp-converter"] },
-      { title: "Code and text", toolIds: ["regex-tester", "text-diff-checker", "markdown-previewer", "html-formatter", "css-formatter", "word-counter", "case-converter", "slug-generator"] },
-      { title: "Web, colour and scheduling", toolIds: ["url-parser", "color-converter", "contrast-checker", "cron-expression-explainer", "qr-code-generator"] },
+      { title: "Code and text", toolIds: ["regex-tester", "text-diff-checker", "markdown-previewer", "html-formatter", "css-formatter", "slug-generator"] },
+      { title: "Text cleanup and lists", description: "Count, clean, sort, deduplicate and replace text.", toolIds: ["word-counter", "case-converter", "remove-duplicate-lines", "sort-lines", "find-and-replace-text", "remove-extra-spaces"] },
+      { title: "Data conversion and generators", toolIds: ["csv-to-json-converter", "json-to-csv-converter", "password-generator", "lorem-ipsum-generator"] },
+      { title: "Web, colour and scheduling", toolIds: ["url-parser", "color-converter", "contrast-checker", "cron-expression-explainer", "qr-code-generator"], alsoToolIds: ["wifi-qr-code-generator", "upi-qr-code-generator"] },
     ],
   },
   {

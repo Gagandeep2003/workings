@@ -28,6 +28,7 @@ export function validateTool(t: ToolDefinition, all: Map<string, ToolDefinition>
   need(t.slug === t.id, "slug should equal id so there is only ever one URL per tool");
   need(CATEGORY_IDS.includes(t.category), `unknown category ${t.category}`);
   need(t.engineModule in engineModules, `unknown engine module ${t.engineModule}`);
+  need(!!t.client === (t.engineModule === "client"), 'client tools must use engineModule "client" (and only they may)');
   need(t.title.trim().length >= 3, "title missing");
   need(t.h1.trim().length >= 3, "h1 missing");
   need(t.shortDescription.length >= 30 && t.shortDescription.length <= 140, `shortDescription should be 30–140 chars (is ${t.shortDescription.length})`);
@@ -41,10 +42,21 @@ export function validateTool(t: ToolDefinition, all: Map<string, ToolDefinition>
   need(t.formula.expression.length >= 1 && t.formula.plain.length > 10, "formula needs an expression and a plain-language line");
   need(t.howItWorks.length >= 2, "howItWorks needs at least 2 paragraphs");
   need(t.howItWorks.join(" ").length >= 450, "howItWorks is too thin to be genuinely useful (min 450 chars)");
-  need(t.examples.length >= 1, "needs at least one worked example");
+  if (t.client) {
+    need(t.inputs.length === 0 && t.examples.length === 0, "client tools have no engine inputs or engine-computed examples");
+    need((t.specs?.length ?? 0) >= 4, "client tools need at least 4 specs (formats, limits)");
+    need((t.practicalExamples?.length ?? 0) >= 2, "client tools need at least 2 practical examples");
+    for (const e of t.practicalExamples ?? []) need(e.title.length > 3 && e.scenario.length > 30 && e.result.length > 20, `practical example \"${e.title}\" is too thin`);
+    need(t.faqs && t.faqs.length >= 4, "client tools need at least 4 FAQs");
+    need(!t.shareable, "client tools handle files and must not offer share links");
+  } else {
+    need(t.examples.length >= 1, "needs at least one worked example");
+  }
   need(t.assumptions.length >= 1, "needs at least one assumption or limitation");
-  need(t.output.primary.length >= 1, "output.primary must list the label(s) the engine returns");
-  need(t.inputs.length >= 1, "needs inputs");
+  if (!t.client) {
+    need(t.output.primary.length >= 1, "output.primary must list the label(s) the engine returns");
+    need(t.inputs.length >= 1, "needs inputs");
+  }
   need(t.relatedTools.length >= 3, "needs at least 3 related tools");
   need(typeof t.requiresDynamicData === "boolean", "requiresDynamicData must be set");
   need(!t.requiresDynamicData || t.reviewal === "dynamic", "tools that need dynamic data must be marked reviewal: dynamic");
@@ -103,7 +115,7 @@ export function validateTool(t: ToolDefinition, all: Map<string, ToolDefinition>
     need(t.reviewal !== "evergreen", "tools with regulatory data must be marked reviewal: periodic or dynamic");
   }
   if (t.lastModified) need(/^\d{4}-\d{2}-\d{2}$/.test(t.lastModified), "lastModified must be YYYY-MM-DD");
-  if (!t.shareable) need(t.category === "developer", "only developer tools should disable sharing");
+  if (!t.shareable) need(t.category === "developer" || t.category === "image-pdf", "only developer and file tools should disable sharing");
   return issues;
 }
 

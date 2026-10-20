@@ -6,13 +6,20 @@
 export const HOME = {
   /** Shown as the large cards under the search box. Chosen for usefulness, not novelty. */
   popular: [
+    "image-compressor", "jpg-to-pdf", "merge-pdf", "passport-photo-resizer",
     "percentage-calculator", "emi-calculator", "sip-calculator", "gst-calculator",
-    "age-calculator", "cgpa-to-percentage-calculator", "days-between-dates-calculator", "unit-converter",
-    "salary-hike-percentage-calculator", "neet-ug-marks-calculator", "scientific-calculator", "json-formatter",
+    "age-calculator", "cgpa-to-percentage-calculator", "unit-converter", "pdf-compressor",
   ],
   /** Short suggestion chips under the hero search box. */
-  searchChips: ["percentage-calculator", "emi-calculator", "sip-calculator", "age-calculator", "jee-main-marks-calculator", "json-formatter"],
+  searchChips: ["image-compressor", "jpg-to-pdf", "percentage-calculator", "emi-calculator", "age-calculator", "json-formatter"],
   sections: [
+    {
+      key: "files",
+      title: "Image and PDF tools",
+      blurb: "Compress, resize, convert and merge files. They never leave your device.",
+      category: "image-pdf" as const,
+      ids: ["image-compressor", "image-resizer", "image-converter", "passport-photo-resizer", "jpg-to-pdf", "merge-pdf", "split-pdf", "pdf-compressor"],
+    },
     {
       key: "essential",
       title: "Essential calculators",
@@ -46,7 +53,7 @@ export const HOME = {
       title: "Developer utilities",
       blurb: "Run entirely in your browser. Nothing you paste is uploaded.",
       category: "developer" as const,
-      ids: ["json-formatter", "base64-encode-decode", "jwt-decoder", "uuid-generator", "regex-tester", "hash-generator", "unix-timestamp-converter", "text-diff-checker"],
+      ids: ["json-formatter", "csv-to-json-converter", "password-generator", "remove-duplicate-lines", "base64-encode-decode", "regex-tester", "qr-code-generator", "text-diff-checker"],
     },
   ],
 };
